@@ -12,3 +12,9 @@ INSERT INTO test_db.test_table VALUES(7, "Amman");
 
 SELECT * FROM test_db.test_table;
 
+We verify that our connection works by going running the our application with:
+
+cd ./backend
+./gradlew bootRun
+
+We then go to localhost:8080/hello and verify that a  "This is a Test" is there
