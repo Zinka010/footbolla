@@ -17,7 +17,7 @@ public class BackendApplication {
     }
 
     @GetMapping("/hello")
-    public String sayHello(@RequestParam(value = "myName", defaultValue = "World") String name) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public String sayHello() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         String username = "root"; // our default username is root
         String password = "password"; // our default password is password
         String dbName = "test_db"; // our current db name is test_db
@@ -31,6 +31,8 @@ public class BackendApplication {
             e.printStackTrace();
         }
 
+        String name = "";
+
         String readMessageQuery = "SELECT * FROM test_table";
         try {
             Statement statement = connection.createStatement();
@@ -42,6 +44,6 @@ public class BackendApplication {
         }
 
         // Going to http://localhost:8080/hello should return "Hello HelloWorld" since name = "Hello World" (from the DB).
-        return String.format("Hello %s!", name);
+        return String.format("Database entry is %s!", name);
     }
 }
