@@ -43,7 +43,7 @@ public class BackendApplication {
             e.printStackTrace();
         }
 
-        // Going to http://localhost:8080/hello should return "Hello HelloWorld" since name = "This is a test" (from the DB).
+        // Going to http://localhost:8080/hello should return "Hello HelloWorld" since name = "This is a Test" (from the DB).
         return String.format("Database entry is %s!", name);
     }
 }
