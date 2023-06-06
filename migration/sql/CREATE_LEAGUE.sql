@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS League (
+	id	INTEGER PRIMARY KEY AUTO_INCREMENT,
+	country_id	INTEGER,
+	name	VARCHAR(255),
+	FOREIGN KEY(country_id) REFERENCES country(id),
+    UNIQUE(name)
+)
