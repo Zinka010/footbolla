@@ -82,6 +82,21 @@ def sqlite_to_mysql(sqlite_db, mysql_host, mysql_user, mysql_password, mysql_db)
         # Commit changes for each table
         mysql_conn.commit()
 
+    for table_name in attribute_tables:
+        sqlite_cursor.execute(f"SELECT * FROM {table_name}")
+        rows = sqlite_cursor.fetchall()
+
+        # Insert the data into MySQL
+        for row in rows:
+            try:
+                placeholders = ",".join(["%s"] * len(row))
+                mysql_cursor.execute(
+                    f"INSERT INTO {table_name} VALUES ({placeholders})", row
+                )
+                mysql_conn.commit()
+            except Exception as e:
+                errors.append({table_name: table_name, row: row, e: e})
+
     # Close connections
     sqlite_cursor.close()
     sqlite_conn.close()

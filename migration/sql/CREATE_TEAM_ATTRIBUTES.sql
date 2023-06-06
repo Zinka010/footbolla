@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS Team_Attributes (
 	id	INTEGER PRIMARY KEY AUTO_INCREMENT,
-	date	VARCHAR(255),
     team_fifa_api_id INTEGER,
     team_api_id INTEGER,
+    date	VARCHAR(255),
 	buildUpPlaySpeed	INTEGER,
 	buildUpPlaySpeedClass	VARCHAR(255),
 	buildUpPlayDribbling	INTEGER,
