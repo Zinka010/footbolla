@@ -14,10 +14,11 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useLocation } from "react-router";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
+  const history = useLocation();
   return (
     <Center minWidth="100%" minHeight="100vh" bg="gray.200" textAlign="left">
       <Box
@@ -52,7 +53,11 @@ const Login: React.FC = () => {
                 Sign up here.
               </Link>
             </HStack>
-            <Button mt="6" bg="blue.200">
+            <Button
+              mt="6"
+              bg="blue.200"
+              onClick={() => (location.href = "/players")}
+            >
               Login
             </Button>
           </FormControl>

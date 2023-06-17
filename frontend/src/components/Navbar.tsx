@@ -14,13 +14,16 @@ const Navbar: React.FC<NavbarProps> = ({ homePage }) => {
       px={10}
       pt={4}
     >
-      <Link>
+      <Link href="/players">
         <HStack>
           {!homePage && <ArrowBackIcon />}
           <Text>Home</Text>
         </HStack>
       </Link>
-      <Heading size="md">Footfiend</Heading>
+      <HStack spacing={5}>
+        <Heading size="md">Footfiend</Heading>
+        <Link href="/">Logout</Link>
+      </HStack>
     </HStack>
   );
 };

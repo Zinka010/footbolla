@@ -58,7 +58,7 @@ const Signup: React.FC = () => {
                 Login here.
               </Link>
             </HStack>
-            <Button mt="6" bg="blue.200">
+            <Button mt="6" bg="blue.200" onClick={() => (location.href = "/")}>
               Sign Up
             </Button>
           </FormControl>

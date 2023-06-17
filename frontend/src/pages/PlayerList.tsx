@@ -1,6 +1,8 @@
 import {
   Box,
+  Button,
   Center,
+  HStack,
   Heading,
   Table,
   TableContainer,
@@ -9,6 +11,7 @@ import {
   Th,
   Thead,
   Tr,
+  Link,
 } from "@chakra-ui/react";
 import { Player } from "../types/types";
 import { useEffect, useState } from "react";
@@ -34,7 +37,7 @@ const PlayerList: React.FC = () => {
   return (
     <>
       <Navbar homePage={true} />
-      <Center minHeight="full" minWidth="100%" bg="gray.200">
+      <Center minHeight="100%" minWidth="100%" bg="gray.200">
         <Box
           minWidth="300px"
           width="2000px"
@@ -42,6 +45,7 @@ const PlayerList: React.FC = () => {
           rounded="2xl"
           m={20}
           p={16}
+          textAlign={"left"}
         >
           <Heading size="3xl" mb={10}>
             Players
@@ -65,7 +69,12 @@ const PlayerList: React.FC = () => {
                       <Td>{player.name}</Td>
                       <Td>{player.dob}</Td>
                       <Td>{player.height}</Td>
-                      <Td>{player.weight}</Td>
+                      <Td>
+                        <HStack justifyContent="space-between">
+                          <p>{player.weight}</p>
+                          <Link href={`/player/${player.id}`}>View</Link>
+                        </HStack>
+                      </Td>
                     </Tr>
                   );
                 })}
