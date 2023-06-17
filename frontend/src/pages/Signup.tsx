@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 
-const Login: React.FC = () => {
+const Signup: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
@@ -29,10 +29,14 @@ const Login: React.FC = () => {
       >
         <VStack align={"left"} gap={4}>
           <Heading size="3xl">Footfiend</Heading>
-          <Heading size="lg">Log In</Heading>
+          <Heading size="lg">Sign Up</Heading>
           <FormControl>
             <FormLabel>Username</FormLabel>
             <Input type="text"></Input>
+            <FormLabel>Email</FormLabel>
+            <Input type="email"></Input>
+            <FormLabel>Confirm Email</FormLabel>
+            <Input type="email"></Input>
             <FormLabel>Password</FormLabel>
             <InputGroup>
               <Input type={showPassword ? "text" : "password"}></Input>
@@ -46,14 +50,16 @@ const Login: React.FC = () => {
                 </Button>
               </InputRightElement>
             </InputGroup>
+            <FormLabel>Confirm Password</FormLabel>
+            <Input type="password"></Input>
             <HStack mt={2}>
-              <Text>Don't have an account?</Text>
-              <Link fontWeight={600} href="/signup">
-                Sign up here.
+              <Text>Already have an account?</Text>
+              <Link fontWeight={600} href="/">
+                Login here.
               </Link>
             </HStack>
             <Button mt="6" bg="blue.200">
-              Login
+              Sign Up
             </Button>
           </FormControl>
         </VStack>
@@ -62,4 +68,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Signup;
