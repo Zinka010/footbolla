@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS Users (
     user_id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(255),
-    email VARCHAR(255),
-    password VARCHAR(255)
+    username VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL CHECK(LENGTH(password) >= 8)
 )
