@@ -1,5 +1,4 @@
 CREATE TABLE IF NOT EXISTS Leagues (
 	league_id	INTEGER PRIMARY KEY AUTO_INCREMENT,
-	league_name	VARCHAR(255),
-    UNIQUE(league_name)
+	league_name	VARCHAR(255) UNIQUE
 )

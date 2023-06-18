@@ -20,13 +20,13 @@ def main():
     )
     mysql_cursor = mysql_conn.cursor()
 
-
-
     create_db(mysql_cursor)
 
     mysql_conn.select_db("footyfiend")
     mysql_cursor = mysql_conn.cursor()
 
+    # drop_tables removes all the tables so we can have a fresh set in create_tables. It is a destructive action that
+    #   will be removed once the data migration is complete.
     drop_tables(mysql_cursor)
     create_tables(mysql_cursor)
 
@@ -63,7 +63,6 @@ def create_tables(mysql_cursor):
     create_isownerof(mysql_cursor)
     create_isinuserteam(mysql_cursor)
     create_admin(mysql_cursor)
-
 
 
 def sqlFileContent(path):
