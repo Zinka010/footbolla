@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS Admins (
+    user_id INTEGER PRIMARY KEY,
+    FOREIGN KEY(user_id) REFERENCES Users(user_id)
+)
