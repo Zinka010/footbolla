@@ -1,0 +1,2 @@
+INSERT INTO IsInUserTeam VALUES(1, 1);
+INSERT INTO IsInUserTeam VALUES(2, 2);

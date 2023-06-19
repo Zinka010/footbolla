@@ -106,6 +106,9 @@ def populate_tables(mysql, sqlite, conn):
     populate_sample_matches(mysql, sqlite, conn)
     populate_sample_matches_played(mysql, sqlite, conn)
     populate_is_in_league(mysql, sqlite, conn)
+    populate_user_teams(mysql, conn)
+    populate_is_owner_of(mysql, conn)
+    populate_is_in_user_team(mysql, conn)
 
 
 def create_db(mysql_cursor):
@@ -296,6 +299,52 @@ def populate_is_in_league(mysql_cursor, sqlite_cursor, mysql_conn):
         except Exception as e:
             # do nothing
             e
+    mysql_conn.commit()
+
+
+def populate_user_teams(mysql_cursor, mysql_conn):
+    sample_user_teams = sqlFileContent("sample-data/SAMPLE_USER_TEAMS.sql")
+
+    inserts = sample_user_teams.split(";")
+
+    for insert in inserts:
+        if insert.strip() != "":
+            try:
+                mysql_cursor.execute(insert)
+            except Exception as e:
+                # do nothing
+                e
+    mysql_conn.commit()
+
+
+def populate_is_owner_of(mysql_cursor, mysql_conn):
+    sample_is_owner_sql = sqlFileContent("sample-data/SAMPLE_IS_OWNER_OF.sql")
+
+    inserts = sample_is_owner_sql.split(";")
+
+    for insert in inserts:
+        if insert.strip() != "":
+            try:
+                mysql_cursor.execute(insert)
+            except Exception as e:
+                # do nothing
+                e
+
+    mysql_conn.commit()
+
+
+def populate_is_in_user_team(mysql_cursor, mysql_conn):
+    sample_sql = sqlFileContent("sample-data/SAMPLE_ISINUSERTEAM.sql")
+
+    inserts = sample_sql.split(";")
+
+    for insert in inserts:
+        if insert.strip() != "":
+            try:
+                mysql_cursor.execute(insert)
+            except Exception as e:
+                print(e)
+
     mysql_conn.commit()
 
 

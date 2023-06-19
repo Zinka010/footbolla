@@ -1,0 +1,2 @@
+INSERT INTO UserTeams (team_name) VALUES("Awesome Team 1");
+INSERT INTO UserTeams (team_name) VALUES("Awesome Team 2");

@@ -1,0 +1,2 @@
+INSERT INTO IsOwnerOf VALUES(1, 1);
+INSERT INTO IsOwnerOf Values(2, 2);
