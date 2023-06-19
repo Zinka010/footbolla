@@ -48,7 +48,8 @@ def manipulate_sqlite(sqlite_conn):
                 sqlite_conn.execute(alter)
                 sqlite_conn.commit()
             except Exception as e:
-                print(e)
+                # do nothing, columns already exist
+                e
 
     updates = sqlFileContent("manipulating-dataset/UPDATE_MATCH_COLUMNS.sql").split(";")
 
@@ -58,7 +59,8 @@ def manipulate_sqlite(sqlite_conn):
                 sqlite_conn.execute(update)
                 sqlite_conn.commit()
             except Exception as e:
-                print(e)
+                # do nothing, don't know why this would fail
+                e
 
 
 def drop_tables(mysql_cursor):
@@ -103,6 +105,7 @@ def populate_tables(mysql, sqlite, conn):
     populate_sample_players(mysql, sqlite, conn)
     populate_sample_matches(mysql, sqlite, conn)
     populate_sample_matches_played(mysql, sqlite, conn)
+    populate_is_in_league(mysql, sqlite, conn)
 
 
 def create_db(mysql_cursor):
@@ -277,6 +280,22 @@ def populate_sample_matches_played(mysql_cursor, sqlite_cursor, mysql_conn):
             # do nothing
             e
 
+    mysql_conn.commit()
+
+
+def populate_is_in_league(mysql_cursor, sqlite_cursor, mysql_conn):
+    get_team_league_sql = sqlFileContent("sample-data/GET_TEAM_LEAGUE.sql")
+
+    sqlite_cursor.execute(get_team_league_sql)
+    rows = sqlite_cursor.fetchall()
+
+    for row in rows:
+        try:
+            placeholder = ",".join(["%s"] * len(row))
+            mysql_cursor.execute(f"INSERT INTO IsInLeague VALUES ({placeholder})", row)
+        except Exception as e:
+            # do nothing
+            e
     mysql_conn.commit()
 
 
