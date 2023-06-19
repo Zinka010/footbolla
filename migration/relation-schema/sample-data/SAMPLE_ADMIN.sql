@@ -1,0 +1,1 @@
+INSERT INTO Admins SELECT user_id FROM Users WHERE username = "adhingz"

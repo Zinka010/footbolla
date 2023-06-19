@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS Teams (
 	team_id	INTEGER PRIMARY KEY AUTO_INCREMENT,
 	team_long_name	VARCHAR(255) UNIQUE,
 	team_short_name	VARCHAR(255),
+	team_api_id INTEGER UNIQUE,
     buildUpPlaySpeed	INTEGER,
 	buildUpPlaySpeedClass	VARCHAR(255),
 	buildUpPlayDribbling	INTEGER,

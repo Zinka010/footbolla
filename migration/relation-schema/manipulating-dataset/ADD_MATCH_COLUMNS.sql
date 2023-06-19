@@ -1,0 +1,2 @@
+ALTER TABLE Match ADD COLUMN home_team_id INTEGER;
+ALTER TABLE Match ADD COLUMN away_team_id INTEGER;
