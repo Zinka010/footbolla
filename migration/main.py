@@ -2,24 +2,38 @@ import sqlite3
 import pymysql
 import re
 import os
+import sys
 
 
 sqlite_db = "migration/database.db"
-mysql_host = "localhost"
-mysql_user = "root"
-mysql_password = "password"
+mysql_host = sys.argv[3] if (len(sys.argv) > 3) else "localhost"
+mysql_user = sys.argv[1] if (len(sys.argv) > 1) else "root"
+mysql_password = sys.argv[2] if (len(sys.argv) > 2) else "password"
 mysql_db = "footyfiend"
 
 
 def main():
-    sqlite_conn = sqlite3.connect(sqlite_db)
+    sqlite_conn = None
+    try:
+        sqlite_conn = sqlite3.connect(sqlite_db)
+    except Exception as e:
+        print(e)
+        exit(1)
+
     sqlite_cursor = sqlite_conn.cursor()
 
     manipulate_sqlite(sqlite_conn)
 
-    mysql_conn = pymysql.connect(
-        host=mysql_host, user=mysql_user, password=mysql_password
-    )
+    mysql_conn = None
+
+    try:
+        mysql_conn = pymysql.connect(
+            host=mysql_host, user=mysql_user, password=mysql_password
+        )
+    except Exception as e:
+        print(e)
+        exit(1)
+
     mysql_cursor = mysql_conn.cursor()
 
     create_db(mysql_cursor)
