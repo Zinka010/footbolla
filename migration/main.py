@@ -4,7 +4,7 @@ import re
 import os
 
 
-sqlite_db = "database.db"
+sqlite_db = "migration/database.db"
 mysql_host = "localhost"
 mysql_user = "root"
 mysql_password = "password"
@@ -12,8 +12,10 @@ mysql_db = "footyfiend"
 
 
 def main():
-    # sqlite_conn = sqlite3.connect(sqlite_db)
-    # sqlite_cursor = sqlite_conn.cursor()
+    sqlite_conn = sqlite3.connect(sqlite_db)
+    sqlite_cursor = sqlite_conn.cursor()
+
+    manipulate_sqlite(sqlite_conn)
 
     mysql_conn = pymysql.connect(
         host=mysql_host, user=mysql_user, password=mysql_password
@@ -29,6 +31,34 @@ def main():
     #   will be removed once the data migration is complete.
     drop_tables(mysql_cursor)
     create_tables(mysql_cursor)
+    populate_tables(mysql_cursor, sqlite_cursor, mysql_conn)
+
+
+def sqlFileContent(path):
+    content = open("migration/relation-schema/" + path).read()
+    return content
+
+
+def manipulate_sqlite(sqlite_conn):
+    alters = sqlFileContent("manipulating-dataset/ADD_MATCH_COLUMNS.sql").split(";")
+
+    for alter in alters:
+        if alter.strip() != "":
+            try:
+                sqlite_conn.execute(alter)
+                sqlite_conn.commit()
+            except Exception as e:
+                print(e)
+
+    updates = sqlFileContent("manipulating-dataset/UPDATE_MATCH_COLUMNS.sql").split(";")
+
+    for update in updates:
+        if update.strip() != "":
+            try:
+                sqlite_conn.execute(update)
+                sqlite_conn.commit()
+            except Exception as e:
+                print(e)
 
 
 def drop_tables(mysql_cursor):
@@ -65,9 +95,14 @@ def create_tables(mysql_cursor):
     create_admin(mysql_cursor)
 
 
-def sqlFileContent(path):
-    content = open("migration/relation-schema/" + path).read()
-    return content
+def populate_tables(mysql, sqlite, conn):
+    populate_leagues(mysql, sqlite, conn)
+    populate_sample_users(mysql, conn)
+    populate_sample_admin(mysql, conn)
+    populate_sample_teams(mysql, sqlite, conn)
+    populate_sample_players(mysql, sqlite, conn)
+    populate_sample_matches(mysql, sqlite, conn)
+    populate_sample_matches_played(mysql, sqlite, conn)
 
 
 def create_db(mysql_cursor):
@@ -128,6 +163,121 @@ def create_isinuserteam(mysql_cursor):
 def create_admin(mysql_cursor):
     create_admin_sql = sqlFileContent("create/CREATE_ADMIN.sql")
     mysql_cursor.execute(create_admin_sql)
+
+
+def populate_leagues(mysql_cursor, sqlite_cursor, mysql_conn):
+    sqlite_cursor.execute("SELECT id, name FROM League")
+    rows = sqlite_cursor.fetchall()
+
+    for row in rows:
+        placeholder = ",".join(["%s"] * len(row))
+        mysql_cursor.execute(f"INSERT INTO Leagues VALUES({placeholder})", row)
+    mysql_conn.commit()
+
+
+def populate_sample_users(mysql_cursor, mysql_conn):
+    insert_users_sql = sqlFileContent("sample-data/SAMPLE_USERS.sql")
+    inserts = insert_users_sql.split(";")
+    for insert in inserts:
+        if insert.strip() != "":
+            mysql_cursor.execute(insert)
+    mysql_conn.commit()
+
+
+def populate_sample_admin(mysql_cursor, mysql_conn):
+    insert_admin_sql = sqlFileContent("sample-data/SAMPLE_ADMIN.sql")
+    mysql_cursor.execute(insert_admin_sql)
+    mysql_conn.commit()
+
+
+def populate_sample_teams(mysql_cursor, sqlite_cursor, mysql_conn):
+    sample_teams_sql = sqlFileContent("sample-data/GET_SAMPLE_TEAMS.sql")
+    sqlite_cursor.execute(sample_teams_sql)
+    rows = sqlite_cursor.fetchall()
+    for row in rows:
+        try:
+            placeholder = ",".join(["%s"] * len(row))
+            mysql_cursor.execute(f"INSERT INTO Teams VALUES({placeholder})", row)
+        except Exception as e:
+            print(e)
+    mysql_conn.commit()
+
+
+def populate_sample_players(mysql_cursor, sqlite_cursor, mysql_conn):
+    sample_players_sql = sqlFileContent("sample-data/GET_SAMPLE_PLAYERS.sql")
+    sqlite_cursor.execute(sample_players_sql)
+    rows = sqlite_cursor.fetchall()
+
+    for row in rows:
+        try:
+            placeholder = ",".join(["%s"] * len(row))
+            mysql_cursor.execute(f"INSERT INTO Players VALUES({placeholder})", row)
+        except Exception as e:
+            print(e)
+    mysql_conn.commit()
+
+
+def populate_sample_matches(mysql_cursor, sqlite_cursor, mysql_conn):
+    get_teams_in_mysql = "SELECT team_id FROM Teams"
+    mysql_cursor.execute(get_teams_in_mysql)
+    rows = mysql_cursor.fetchall()
+
+    id_in = []
+    for row in rows:
+        id_in.append(str(row[0]))
+
+    ids = ", ".join(id_in)
+
+    get_matches_in_sqlite = f"""
+    SELECT id, season, home_team_goal, away_team_goal
+    FROM Match
+    WHERE home_team_id IN ({ids})
+    OR away_team_id IN ({ids})
+    """
+    sqlite_cursor.execute(get_matches_in_sqlite)
+    matches = sqlite_cursor.fetchall()
+
+    for match in matches:
+        try:
+            placeholder = ",".join(["%s"] * len(match))
+            mysql_cursor.execute(f"INSERT INTO Matches VALUES ({placeholder})", match)
+        except Exception as e:
+            print(e)
+    mysql_conn.commit()
+
+
+def populate_sample_matches_played(mysql_cursor, sqlite_cursor, mysql_conn):
+    get_teams_in_mysql = "SELECT team_id FROM Teams"
+    mysql_cursor.execute(get_teams_in_mysql)
+    rows = mysql_cursor.fetchall()
+
+    id_in = []
+    for row in rows:
+        id_in.append(str(row[0]))
+
+    ids = ", ".join(id_in)
+
+    get_match = f"""
+    SELECT id, home_team_id, away_team_id
+    FROM Match
+    WHERE home_team_id IN ({ids})
+    OR away_team_id IN ({ids})
+    """
+
+    sqlite_cursor.execute(get_match)
+    matches = sqlite_cursor.fetchall()
+
+    for match in matches:
+        try:
+            placeholder = ",".join(["%s"] * len(match))
+            mysql_cursor.execute(
+                f"INSERT INTO MatchesPlayed VALUES ({placeholder})", match
+            )
+        except Exception as e:
+            # do nothing
+            e
+
+    mysql_conn.commit()
 
 
 if __name__ == "__main__":
