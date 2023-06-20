@@ -81,6 +81,7 @@ def drop_tables(mysql_cursor):
     tables = [
         "Admins",
         "MatchesPlayed",
+        "PlayerTeamHistory",
         "IsInLeague",
         "IsInUserTeam",
         "Leagues",
@@ -109,6 +110,7 @@ def create_tables(mysql_cursor):
     create_isownerof(mysql_cursor)
     create_isinuserteam(mysql_cursor)
     create_admin(mysql_cursor)
+    create_player_history(mysql_cursor)
 
 
 def populate_tables(mysql, sqlite, conn):
@@ -123,6 +125,7 @@ def populate_tables(mysql, sqlite, conn):
     populate_user_teams(mysql, conn)
     populate_is_owner_of(mysql, conn)
     populate_is_in_user_team(mysql, conn)
+    populate_player_history(mysql, sqlite, conn)
 
 
 def create_db(mysql_cursor):
@@ -183,6 +186,11 @@ def create_isinuserteam(mysql_cursor):
 def create_admin(mysql_cursor):
     create_admin_sql = sqlFileContent("create/CREATE_ADMIN.sql")
     mysql_cursor.execute(create_admin_sql)
+
+
+def create_player_history(mysql_cursor):
+    create_player_team_sql = sqlFileContent("create/CREATE_PLAYER_HISTORY.sql")
+    mysql_cursor.execute(create_player_team_sql)
 
 
 def populate_leagues(mysql_cursor, sqlite_cursor, mysql_conn):
@@ -359,6 +367,24 @@ def populate_is_in_user_team(mysql_cursor, mysql_conn):
             except Exception as e:
                 print(e)
 
+    mysql_conn.commit()
+
+
+def populate_player_history(mysql_cursor, sqlite_cursor, mysql_conn):
+    sample_sql = sqlFileContent("sample-data/GET_PLAYER_HISTORY.sql")
+
+    sqlite_cursor.execute(sample_sql)
+    rows = sqlite_cursor.fetchall()
+
+    for row in rows:
+        try:
+            placeholder = ",".join(["%s"] * len(row))
+            mysql_cursor.execute(
+                f"INSERT INTO PlayerTeamHistory VALUES ({placeholder})", row
+            )
+        except Exception as e:
+            # do nothing
+            e
     mysql_conn.commit()
 
 
