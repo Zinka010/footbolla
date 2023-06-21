@@ -16,6 +16,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'mysql:mysql-connector-java:8.0.33'
+    // https://mvnrepository.com/artifact/org.json/json
+    implementation group: 'org.json', name: 'json', version: '20230227'
+    // https://mvnrepository.com/artifact/org.jooq/jooq
+    implementation 'org.jooq:jooq:3.18.4'
 }
 
 tasks.named('test') {
