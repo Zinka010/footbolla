@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Center,
   HStack,
   Heading,
@@ -12,27 +11,21 @@ import {
   Thead,
   Tr,
   Link,
+  ButtonGroup,
+  Button,
 } from "@chakra-ui/react";
-import { Player } from "../types/types";
-import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import playersJson from "../sample_data/players.json";
+import usePlayers from "../hooks/usePlayers";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
 const PlayerList: React.FC = () => {
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [page, setPage] = useState<number>(0);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      // const data = await fetch(url + `?page=${pagination}`)
-      // const result = await data.json();
-      // setPlayers(result);
-
-      setPlayers(playersJson);
-    };
-
-    fetchData();
-  }, [page]);
+  const {
+    players,
+    fetchNextPageOfPlayers,
+    fetchPreviousPageOfPlayers,
+    isAtStart,
+    isAtEnd,
+  } = usePlayers();
 
   return (
     <>
@@ -58,21 +51,21 @@ const PlayerList: React.FC = () => {
                   <Th>Name</Th>
                   <Th>Birthday</Th>
                   <Th>Height (cm)</Th>
-                  <Th>Weight (kg)</Th>
+                  <Th>Weight (lbs)</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {players.map((player) => {
                   return (
-                    <Tr>
-                      <Td>{player.id}</Td>
+                    <Tr key={player.player_id}>
+                      <Td>{player.player_id}</Td>
                       <Td>{player.name}</Td>
-                      <Td>{player.dob}</Td>
+                      <Td>{player.birthday}</Td>
                       <Td>{player.height}</Td>
                       <Td>
                         <HStack justifyContent="space-between">
                           <p>{player.weight}</p>
-                          <Link href={`/player/${player.id}`}>View</Link>
+                          <Link href={`/player/${player.player_id}`}>View</Link>
                         </HStack>
                       </Td>
                     </Tr>
@@ -81,6 +74,24 @@ const PlayerList: React.FC = () => {
               </Tbody>
             </Table>
           </TableContainer>
+          <Center mt={10}>
+            <ButtonGroup isAttached variant={"outline"}>
+              <Button
+                isDisabled={isAtStart}
+                leftIcon={<ChevronLeftIcon />}
+                onClick={fetchPreviousPageOfPlayers}
+              >
+                Prev
+              </Button>
+              <Button
+                isDisabled={isAtEnd}
+                rightIcon={<ChevronRightIcon />}
+                onClick={fetchNextPageOfPlayers}
+              >
+                Next
+              </Button>
+            </ButtonGroup>
+          </Center>
         </Box>
       </Center>
     </>

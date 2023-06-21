@@ -8,14 +8,15 @@ import {
   StackDivider,
   Text,
 } from "@chakra-ui/layout";
-import playersJSON from "../sample_data/players.json";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardBody, CardHeader } from "@chakra-ui/card";
+import { ExtendedPlayer } from "../types/types";
+import { API_URL } from "../util/CONSTANTS";
+import { Spinner } from "@chakra-ui/react";
 
 const PlayerPage = () => {
   const { playerId } = useParams();
 
-  console;
   return (
     <>
       <Navbar homePage={false} />
@@ -31,10 +32,17 @@ interface PlayerProfileProps {
 }
 
 const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
-  const player = useMemo(
-    () => playersJSON.find((item) => item.id === playerId),
-    [playerId]
-  );
+  const [player, setPlayer] = useState<ExtendedPlayer | null>(null);
+
+  useEffect(() => {
+    const getPlayer = async () => {
+      const data = await fetch(`${API_URL}/player/${playerId}`);
+      const res = await data.json();
+      if (res.length) setPlayer(res[0]);
+    };
+
+    getPlayer();
+  }, [playerId]);
 
   // here we fetch the player profile from the backend
   return (
@@ -43,37 +51,61 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
         Player Profile
       </Heading>
       <Card>
-        <CardHeader fontSize={30} fontWeight={700}>
-          {player?.name}
-        </CardHeader>
-        <CardBody>
-          <Stack divider={<StackDivider />} spacing={4}>
-            <Box>
-              <Heading size="xs" textTransform="uppercase">
-                Date Of Birth
-              </Heading>
-              <Text pt="2" fontSize="sm">
-                {player?.dob}
-              </Text>
-            </Box>
-            <Box>
-              <Heading size="xs" textTransform="uppercase">
-                Height (cm)
-              </Heading>
-              <Text pt="2" fontSize="sm">
-                {player?.height}
-              </Text>
-            </Box>
-            <Box>
-              <Heading size="xs" textTransform="uppercase">
-                Weight (kg)
-              </Heading>
-              <Text pt="2" fontSize="sm">
-                {player?.weight}
-              </Text>
-            </Box>
-          </Stack>
-        </CardBody>
+        {player ? (
+          <>
+            <CardHeader fontSize={30} fontWeight={700}>
+              {player?.name}
+            </CardHeader>
+            <CardBody>
+              <Stack divider={<StackDivider />} spacing={4}>
+                <Box>
+                  <Heading size="xs" textTransform="uppercase">
+                    Preferred Foot
+                  </Heading>
+                  <Text pt="2" fontSize="sm">
+                    {player?.preferred_foot.toUpperCase()}
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading size="xs" textTransform="uppercase">
+                    Sprint Speed
+                  </Heading>
+                  <Text pt="2" fontSize="sm">
+                    {player?.sprint_speed}
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading size="xs" textTransform="uppercase">
+                    Date Of Birth
+                  </Heading>
+                  <Text pt="2" fontSize="sm">
+                    {player?.birthday}
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading size="xs" textTransform="uppercase">
+                    Height (cm)
+                  </Heading>
+                  <Text pt="2" fontSize="sm">
+                    {player?.height}
+                  </Text>
+                </Box>
+                <Box>
+                  <Heading size="xs" textTransform="uppercase">
+                    Weight (lbs)
+                  </Heading>
+                  <Text pt="2" fontSize="sm">
+                    {player?.weight}
+                  </Text>
+                </Box>
+              </Stack>
+            </CardBody>
+          </>
+        ) : (
+          <Center>
+            <Spinner size="lg" />
+          </Center>
+        )}
       </Card>
     </Box>
   );
