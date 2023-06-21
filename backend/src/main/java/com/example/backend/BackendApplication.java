@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,4 +45,25 @@ public class BackendApplication {
             return String.format("Unable to parse JSON: %s", e);
         }
     }
+
+
+    @GetMapping("/player/{ID}")
+    public String getPlayerByID(@PathVariable String ID) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String readMessageQuery = "SELECT * FROM Players WHERE player_id = " + ID;
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(readMessageQuery);
+            JSONObject result = new JSONObject(DSL.using(connection)
+                    .fetch(resultSet)
+                    .formatJSON());
+
+            return result.toString();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return String.format("Unable to parse JSON: %s", e);
+        }
+    }
+
+
 }
