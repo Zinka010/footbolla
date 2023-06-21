@@ -51,7 +51,7 @@ const PlayerList: React.FC = () => {
                   <Th>Name</Th>
                   <Th>Birthday</Th>
                   <Th>Height (cm)</Th>
-                  <Th>Weight (kg)</Th>
+                  <Th>Weight (lbs)</Th>
                 </Tr>
               </Thead>
               <Tbody>

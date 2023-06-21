@@ -92,7 +92,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
                 </Box>
                 <Box>
                   <Heading size="xs" textTransform="uppercase">
-                    Weight (kg)
+                    Weight (lbs)
                   </Heading>
                   <Text pt="2" fontSize="sm">
                     {player?.weight}
