@@ -28,7 +28,7 @@ const Signup: React.FC = () => {
         textAlign={"left"}
       >
         <VStack align={"left"} gap={4}>
-          <Heading size="3xl">Footfiend</Heading>
+          <Heading size="3xl">Footbolla</Heading>
           <Heading size="lg">Sign Up</Heading>
           <FormControl>
             <FormLabel>Username</FormLabel>

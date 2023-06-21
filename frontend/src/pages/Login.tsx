@@ -14,11 +14,9 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useLocation } from "react-router";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const history = useLocation();
   return (
     <Center minWidth="100%" minHeight="100vh" bg="gray.200" textAlign="left">
       <Box
@@ -29,7 +27,7 @@ const Login: React.FC = () => {
         textAlign={"left"}
       >
         <VStack align={"left"} gap={4}>
-          <Heading size="3xl">Footfiend</Heading>
+          <Heading size="3xl">Footbolla</Heading>
           <Heading size="lg">Log In</Heading>
           <FormControl>
             <FormLabel>Username</FormLabel>

@@ -1,4 +1,4 @@
-import { HStack, Heading, Link, Text } from "@chakra-ui/react";
+import { HStack, Link, Text } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 
 interface NavbarProps {
@@ -17,11 +17,10 @@ const Navbar: React.FC<NavbarProps> = ({ homePage }) => {
       <Link href="/players">
         <HStack>
           {!homePage && <ArrowBackIcon />}
-          <Text>Home</Text>
+          <Text fontWeight={700}>Footbolla</Text>
         </HStack>
       </Link>
       <HStack spacing={5}>
-        <Heading size="md">Footfiend</Heading>
         <Link href="/">Logout</Link>
       </HStack>
     </HStack>
