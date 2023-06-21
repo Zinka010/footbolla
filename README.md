@@ -1,4 +1,4 @@
-# CS348 Project - FootyFiend
+# CS348 Project - Footbolla
 
 ## C1 - Loading and Running
 
