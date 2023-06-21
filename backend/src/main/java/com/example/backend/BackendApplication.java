@@ -1,5 +1,8 @@
 package com.example.backend;
 
+import org.jooq.RecordMapper;
+import org.jooq.impl.DSL;
+import org.json.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,43 +10,38 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.*;
+import java.util.List;
 
 @SpringBootApplication
 @RestController
 public class BackendApplication {
 
+    final String username = "root"; // our default username is root
+    final String password = "password"; // our default password is password
+    final String dbName = "footyfiend"; // our current db name is footy_fiend
+    final String url = "jdbc:mysql://127.0.0.1:3306/" + dbName;
+
     public static void main(String[] args) {
         SpringApplication.run(BackendApplication.class, args);
     }
 
-    @GetMapping("/hello")
-    public String sayHello() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        String username = "root"; // our default username is root
-        String password = "password"; // our default password is password
-        String dbName = "test_db"; // our current db name is test_db
-
-        String url = "jdbc:mysql://127.0.0.1:3306/" + dbName;
-        Connection connection = null;
-
+    @GetMapping("/players")
+    public String getPlayers(@RequestParam(name = "startId", defaultValue = "0") Integer startId,
+                             @RequestParam(name = "endId", defaultValue = "50") Integer endId) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
-            connection = DriverManager.getConnection(url, username, password);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        String name = "";
-
-        String readMessageQuery = "SELECT * FROM test_table";
-        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String readMessageQuery = "SELECT player_id, name, birthday, height, weight FROM Players WHERE player_id >="
+                    + startId + " AND player_id < " + endId;
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
-            resultSet.next();
-            name = resultSet.getString(2);
+            JSONObject result = new JSONObject(DSL.using(connection)
+                    .fetch(resultSet)
+                    .formatJSON());
+
+            return result.toString();
         } catch (SQLException e) {
             e.printStackTrace();
+            return String.format("Unable to parse JSON: %s", e);
         }
-
-        // Going to http://localhost:8080/hello should return "Hello HelloWorld" since name = "This is a Test" (from the DB).
-        return String.format("Database entry is %s!", name);
     }
 }
