@@ -14,7 +14,7 @@ To load our sample database, follow these steps:
 
 For the next part to work, you will need a valid MySQL community server running on your computer (localhost) or another valid community for which you know the credentials (host, username, password). You will also need to have python3 installed on your command line. I think Python3 comes installed with all the newer MacOS versions. I'm not sure about Windows / Linux.
 
-### Mac Users
+### Mac/Linux Users
 3. Run the `migrate.sh` script as such: `bash migrate.sh [username] [password] [host]`. Run this file from the root level of the repository.
 - The username defaults to "username".
 - The password defaults to "password". 
