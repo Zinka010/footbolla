@@ -63,11 +63,11 @@ public class BackendApplication {
 
     @GetMapping("/players")
     public String getPlayers(@RequestParam(name = "startId", defaultValue = "0") Integer startId,
-                             @RequestParam(name = "endId", defaultValue = "50") Integer endId) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+                             @RequestParam(name = "endId", defaultValue = "50") Integer endId) {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
             String readMessageQuery = "SELECT player_id, name, birthday, height, weight FROM Players WHERE player_id >="
-                    + startId + " AND player_id < " + endId;
+                    + startId + " AND player_id <= " + endId;
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
             JSONArray res = resultToJsonArray(resultSet, connection);
@@ -80,7 +80,7 @@ public class BackendApplication {
     }
 
     @GetMapping("/playerCount")
-    public String getPlayerCount() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public String getPlayerCount() {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
             String readMessageQuery = "SELECT COUNT(*) AS playerCount FROM Players";
@@ -96,7 +96,7 @@ public class BackendApplication {
     }
 
     @GetMapping("/player/{ID}")
-    public String getPlayerByID(@PathVariable String ID) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public String getPlayerByID(@PathVariable String ID) {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
             String readMessageQuery = "SELECT * FROM Players WHERE player_id = " + ID;
