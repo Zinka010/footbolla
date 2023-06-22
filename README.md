@@ -16,7 +16,7 @@ For the next part to work, you will need a valid MySQL community server running 
 
 ### Mac/Linux Users
 3. Run the `migrate.sh` script as such: `bash migrate.sh [username] [password] [host]`. Run this file from the root level of the repository.
-- The username defaults to "username".
+- The username defaults to "root".
 - The password defaults to "password". 
 - The host defaults to "localhost".
 
