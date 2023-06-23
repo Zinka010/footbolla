@@ -10,7 +10,7 @@
 
 To load our sample database, follow these steps:
 1. Download the dataset that are database inherits from. It can be found [here](https://www.kaggle.com/datasets/hugomathien/soccer).
-2. Rename this file to `database.db` and move this file into the `migration/` directory of this repository.
+2. Rename this file to `database.db` and move this file into the `migration/` directory of this repository. Make sure you don't have any other database files (such as database.sqlite, database.sql, etc) in the migration/ directory.
 
 For the next part to work, you will need a valid MySQL community server running on your computer (localhost) or another valid community for which you know the credentials (host, username, password). You will also need to have python3 installed on your command line. I think Python3 comes installed with all the newer MacOS versions. I'm not sure about Windows / Linux.
 
