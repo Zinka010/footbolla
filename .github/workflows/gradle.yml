@@ -19,9 +19,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      env:
-        working-directory: ./backend
+    env:
+      working-directory: ./backend
 
     steps:
       - uses: actions/checkout@v3
