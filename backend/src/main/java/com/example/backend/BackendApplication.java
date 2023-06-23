@@ -7,7 +7,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.*;
 import java.util.List;
@@ -97,44 +100,6 @@ public class BackendApplication {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
             String readMessageQuery = "SELECT * FROM Players WHERE player_id = " + ID;
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(readMessageQuery);
-            JSONArray res = resultToJsonArray(resultSet, connection);
-
-            return res.toString();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return String.format("Unable to parse JSON: %s", e);
-        }
-    }
-    @PostMapping("/user_teams")
-    public String createUserTeam(@PathVariable String teamName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        try {
-            Connection connection = DriverManager.getConnection(url, username, password);
-            String readMessageQuery = "INSERT INTO UserTeams (team_name) VALUES(" + teamName + ")";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(readMessageQuery);
-            JSONArray res = resultToJsonArray(resultSet, connection);
-
-            return res.toString();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return String.format("Unable to parse JSON: %s", e);
-        }
-    }
-
-    @PostMapping("/user_teams")
-    public String addPlayerToUserTeam(@PathVariable String teamID, @PathVariable String[] playerIDs) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        try {
-            Connection connection = DriverManager.getConnection(url, username, password);
-            String insertRows = "";
-            for (int i = 0; i < playerIDs.length; i++){
-                insertRows += "(" + playerIDs[i] + "," + teamID + ")";
-                if (i != playerIDs.length - 1){
-                    insertRows += ",";
-                }
-            }
-            String readMessageQuery = "INSERT INTO IsInUserTeam VALUES " + insertRows;
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
             JSONArray res = resultToJsonArray(resultSet, connection);
