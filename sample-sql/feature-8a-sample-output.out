@@ -1,0 +1,10 @@
++---------+-----------+----------------------+---------------+
+| user_id | username  | email                | password      |
++---------+-----------+----------------------+---------------+
+|       1 | rishadl   | rish@gmail.com       | littleciteh   |
+|       2 | adhingz   | adhing@gmail.com     | manutd123     |
+|       3 | justin123 | jt123@gmail.com      | just1nt123    |
+|       4 | justun    | justun2001@gmail.com | just881231    |
+|       5 | amman99   | am99@gmail.com       | thispass12333 |
++---------+-----------+----------------------+---------------+
+5 rows in set (0.01 sec)

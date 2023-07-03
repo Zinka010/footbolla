@@ -45,4 +45,3 @@ a.gk_reflexes
 FROM Player p, Player_Attributes a
 WHERE p.player_api_id = a.player_api_id AND p.player_fifa_api_id = a.player_fifa_api_id
 GROUP BY p.id
-LIMIT 100
