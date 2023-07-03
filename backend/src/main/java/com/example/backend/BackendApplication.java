@@ -108,7 +108,7 @@ public class BackendApplication {
         }
     }
 
-    @PostMapping("/is_in_user_teams")
+    @PostMapping("/add_to_user_teams")
     public String addPlayerToUserTeam(@PathVariable String teamID, @PathVariable String[] playerIDs) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
@@ -121,7 +121,7 @@ public class BackendApplication {
             }
             String insertQuery = "INSERT INTO IsInUserTeam VALUES " + insertRows;
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(readMessageQuery);
+            ResultSet resultSet = statement.executeQuery(insertQuery);
             JSONArray res = resultToJsonArray(resultSet, connection);
 
             return res.toString();
