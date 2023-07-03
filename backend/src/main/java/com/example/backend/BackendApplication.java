@@ -119,7 +119,7 @@ public class BackendApplication {
                     insertRows += ",";
                 }
             }
-            String readMessageQuery = "INSERT INTO IsInUserTeam VALUES " + insertRows;
+            String insertQuery = "INSERT INTO IsInUserTeam VALUES " + insertRows;
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
             JSONArray res = resultToJsonArray(resultSet, connection);
