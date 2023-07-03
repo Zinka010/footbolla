@@ -27,4 +27,3 @@ a.defenceDefenderLineClass
 FROM Team, Team_Attributes a
 WHERE Team.team_api_id = a.team_api_id AND Team.team_fifa_api_id = a.team_fifa_api_id
 GROUP BY Team.id
-LIMIT 20
