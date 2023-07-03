@@ -123,7 +123,7 @@ public class BackendApplication {
         }
     }
 
-    @PostMapping("/user_teams")
+    @PostMapping("/is_in_user_teams")
     public String addPlayerToUserTeam(@PathVariable String teamID, @PathVariable String[] playerIDs) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
