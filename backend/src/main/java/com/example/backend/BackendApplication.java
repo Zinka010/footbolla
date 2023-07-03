@@ -108,6 +108,26 @@ public class BackendApplication {
         }
     }
 
+    @PostMapping("/user_teams")
+    public String createUserTeam(@PathVariable String teamName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String insertQuery = "INSERT INTO UserTeams (team_name) VALUES(" + teamName + ")";
+            Statement statement = connection.createStatement();
+            int rows_added = statement.executeUpdate(insertQuery);
+            String returnMessage = "";
+            if (rows_added == 1){
+                returnMessage = "The user team " + teamName + " has been created";
+            } else {
+                returnMessage = "The user team could not be added";
+            }
+            return returnMessage;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return String.format("Unable to create team: %s", e);
+        }
+    }
+
     @PostMapping("/add_to_user_teams")
     public String addPlayerToUserTeam(@PathVariable String teamID, @PathVariable String[] playerIDs) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
@@ -121,13 +141,17 @@ public class BackendApplication {
             }
             String insertQuery = "INSERT INTO IsInUserTeam VALUES " + insertRows;
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(insertQuery);
-            JSONArray res = resultToJsonArray(resultSet, connection);
-
-            return res.toString();
+            int rows_added = statement.executeUpdate(insertQuery);
+            String returnMessage = "";
+            if (rows_added >= 1){
+                returnMessage = "The selected player(s) have has been added to the team";
+            } else {
+                returnMessage = "The selected player(s) couldn't added to the team";
+            }
+            return returnMessage;
         } catch (SQLException e) {
             e.printStackTrace();
-            return String.format("Unable to parse JSON: %s", e);
+            return String.format("Unable to add player(s) to the team: %s", e);
         }
     }
     
