@@ -19,7 +19,7 @@ const PlayerPage = () => {
 
   return (
     <>
-      <Navbar homePage={false} />
+      <Navbar />
       <Center minHeight="100vh" minWidth="100%" bg="gray.200">
         <PlayerProfile playerId={Number(playerId)} />
       </Center>
