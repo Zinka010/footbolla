@@ -15,8 +15,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
-import { useState } from "react";
-import { ExtendedPlayer } from "../types/types";
+// import { useState } from "react";
+// import { ExtendedPlayer } from "../types/types";
 import { PlusSquareIcon } from "@chakra-ui/icons";
 
 interface PlayerCardProps {
@@ -24,10 +24,13 @@ interface PlayerCardProps {
 }
 
 const PlayerCard: React.FC<PlayerCardProps> = ({ position }) => {
+  /*
   const [selectedPlayer, setSelectedPlayer] = useState<ExtendedPlayer | null>(
     null
   );
+  
   const [player, setPlayer] = useState<ExtendedPlayer | null>(null);
+  */
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -47,7 +50,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ position }) => {
               colorScheme="blue"
               mr={3}
               onClick={() => {
-                setPlayer(selectedPlayer);
+                // setPlayer(selectedPlayer);
                 onClose();
               }}
             >
@@ -56,7 +59,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ position }) => {
             <Button
               colorScheme="red"
               onClick={() => {
-                setPlayer(null);
+                // setPlayer(null);
                 onClose();
               }}
             >
