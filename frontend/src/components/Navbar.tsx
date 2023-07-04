@@ -1,11 +1,16 @@
 import { HStack, Link, Text } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import { useContext } from "react";
+import { UserContext } from "../contexts/userContext";
+import { useLocation } from "react-router-dom";
 
-interface NavbarProps {
-  homePage: boolean;
-}
+const Navbar: React.FC = () => {
+  const userContext = useContext(UserContext);
+  const { user } = userContext;
+  const location = useLocation();
 
-const Navbar: React.FC<NavbarProps> = ({ homePage }) => {
+  const isHomePage = location.pathname == "/players";
+
   return (
     <HStack
       minWidth="100%"
@@ -16,13 +21,15 @@ const Navbar: React.FC<NavbarProps> = ({ homePage }) => {
     >
       <Link href="/players">
         <HStack>
-          {!homePage && <ArrowBackIcon />}
+          {!isHomePage && <ArrowBackIcon />}
           <Text fontWeight={700}>Footbolla</Text>
         </HStack>
       </Link>
-      <HStack spacing={5}>
-        <Link href="/">Logout</Link>
-      </HStack>
+      {user && (
+        <HStack spacing={5}>
+          <Link href="/">Logout</Link>
+        </HStack>
+      )}
     </HStack>
   );
 };

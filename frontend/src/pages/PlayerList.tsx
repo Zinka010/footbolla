@@ -29,7 +29,7 @@ const PlayerList: React.FC = () => {
 
   return (
     <>
-      <Navbar homePage={true} />
+      <Navbar />
       <Center minHeight="100%" minWidth="100%" bg="gray.200">
         <Box
           minWidth="300px"
