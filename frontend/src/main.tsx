@@ -8,11 +8,11 @@ import UserProvider from "./contexts/userProvider.tsx";
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ChakraProvider>
-      <BrowserRouter>
-        <UserProvider>
+      <UserProvider>
+        <BrowserRouter>
           <App />
-        </UserProvider>
-      </BrowserRouter>
+        </BrowserRouter>
+      </UserProvider>
     </ChakraProvider>
   </React.StrictMode>
 );

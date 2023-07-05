@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 
 const Navbar: React.FC = () => {
   const userContext = useContext(UserContext);
-  const { user } = userContext;
+  const { user, setUser } = userContext;
   const location = useLocation();
 
   const isHomePage = location.pathname == "/players";
@@ -53,7 +53,14 @@ const Navbar: React.FC = () => {
       </HStack>
       {user && (
         <HStack spacing={5}>
-          <Link href="/">Logout</Link>
+          <Link
+            onClick={() => {
+              setUser(null);
+              location.pathname = "/";
+            }}
+          >
+            Logout
+          </Link>
         </HStack>
       )}
     </HStack>
