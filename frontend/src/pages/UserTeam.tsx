@@ -2,8 +2,10 @@ import {
   Box,
   Button,
   Center,
+  Divider,
   Grid,
   GridItem,
+  Heading,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -18,6 +20,7 @@ import Navbar from "../components/Navbar";
 // import { useState } from "react";
 // import { ExtendedPlayer } from "../types/types";
 import { PlusSquareIcon } from "@chakra-ui/icons";
+import { useParams, useSearchParams } from "react-router-dom";
 
 interface PlayerCardProps {
   position: string;
@@ -81,6 +84,14 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ position }) => {
 };
 
 const UserTeam: React.FC = () => {
+  const params = useParams();
+  const [searchParams] = useSearchParams();
+
+  const teamId = params["teamId"];
+  const teamName = searchParams.get("teamName");
+
+  console.log(teamId);
+
   return (
     <>
       <Navbar />
@@ -93,6 +104,10 @@ const UserTeam: React.FC = () => {
           m={20}
           p={16}
         >
+          <Heading mb={6} size="3xl" textAlign="left">
+            {teamName}
+          </Heading>
+          <Divider />
           <Grid templateColumns="repeat(3, 1fr)" my={5}>
             <PlayerCard position="Attacker" />
             <PlayerCard position="Attacker" />
