@@ -1,5 +1,6 @@
 package com.example.backend;
 
+import com.example.backend.util.Util;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.impl.DSL;
@@ -7,12 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.*;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @SpringBootApplication
 @RestController
@@ -22,44 +21,17 @@ public class BackendApplication {
     final String password = "password"; // our default password is password
     final String dbName = "footyfiend"; // our current db name is footy_fiend
     final String url = "jdbc:mysql://127.0.0.1:3306/" + dbName;
-
+    Util util = new Util();
     public static void main(String[] args) {
         SpringApplication.run(BackendApplication.class, args);
     }
 
     // Source https://github.com/eugenp/tutorials/blob/master/persistence-modules/core-java-persistence-2/src/main/java/com/baeldung/resultset2json/ResultSet2JSON.java
     // Released under MIT License
-    private static JSONArray resultToJsonArray(ResultSet resultSet, Connection dbConnection) throws SQLException {
-        ResultSetMetaData md = resultSet.getMetaData();
-        int numCols = md.getColumnCount();
-        List<String> colNames = IntStream.range(0, numCols)
-                .mapToObj(i -> {
-                    try {
-                        return md.getColumnName(i + 1);
-                    } catch (SQLException e) {
 
-                        e.printStackTrace();
-                        return "?";
-                    }
-                })
-                .toList();
-
-        List<JSONObject> json = DSL.using(dbConnection)
-                .fetch(resultSet)
-                .map(new RecordMapper<Record, JSONObject>() {
-
-                    @Override
-                    public JSONObject map(Record r) {
-                        JSONObject obj = new JSONObject();
-                        colNames.forEach(cn -> obj.put(cn, r.get(cn)));
-                        return obj;
-                    }
-                });
-        return new JSONArray(json);
-    }
 
     @GetMapping("/players")
-    public String getPlayers(@RequestParam(name = "startId", defaultValue = "0") Integer startId,
+    public ResponseEntity<String> getPlayers(@RequestParam(name = "startId", defaultValue = "0") Integer startId,
                              @RequestParam(name = "endId", defaultValue = "50") Integer endId) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
@@ -67,92 +39,44 @@ public class BackendApplication {
                     + startId + " AND player_id < " + endId;
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
-            JSONArray res = resultToJsonArray(resultSet, connection);
+            JSONArray res = util.resultToJsonArray(resultSet, connection);
 
-            return res.toString();
+            return ResponseEntity.ok(res.toString());
         } catch (SQLException e) {
             e.printStackTrace();
-            return String.format("Unable to parse JSON: %s", e);
+            return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
         }
     }
 
     @GetMapping("/playerCount")
-    public String getPlayerCount() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public ResponseEntity<String> getPlayerCount() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
             String readMessageQuery = "SELECT COUNT(*) AS playerCount FROM Players";
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
-            JSONArray res = resultToJsonArray(resultSet, connection);
+            JSONArray res = util.resultToJsonArray(resultSet, connection);
 
-            return res.toString();
+            return ResponseEntity.ok(res.toString());
         } catch (SQLException e) {
             e.printStackTrace();
-            return String.format("Unable to parse JSON: %s", e);
+            return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
         }
     }
 
     @GetMapping("/player/{ID}")
-    public String getPlayerByID(@PathVariable String ID) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public ResponseEntity<String> getPlayerByID(@PathVariable String ID) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
             String readMessageQuery = "SELECT * FROM Players WHERE player_id = " + ID;
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
-            JSONArray res = resultToJsonArray(resultSet, connection);
-
-            return res.toString();
+            JSONArray res = util.resultToJsonArray(resultSet, connection);
+            statement.close();
+            return ResponseEntity.ok(res.toString());
         } catch (SQLException e) {
             e.printStackTrace();
-            return String.format("Unable to parse JSON: %s", e);
+            return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
         }
     }
-
-    @PostMapping("/user_teams")
-    public String createUserTeam(@PathVariable String teamName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        try {
-            Connection connection = DriverManager.getConnection(url, username, password);
-            String insertQuery = "INSERT INTO UserTeams (team_name) VALUES(" + teamName + ")";
-            Statement statement = connection.createStatement();
-            int rows_added = statement.executeUpdate(insertQuery);
-            String returnMessage = "";
-            if (rows_added == 1){
-                returnMessage = "The user team " + teamName + " has been created";
-            } else {
-                returnMessage = "The user team could not be added";
-            }
-            return returnMessage;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return String.format("Unable to create team: %s", e);
-        }
-    }
-
-    @PostMapping("/add_to_user_teams")
-    public String addPlayerToUserTeam(@PathVariable String teamID, @PathVariable String[] playerIDs) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        try {
-            Connection connection = DriverManager.getConnection(url, username, password);
-            String insertRows = "";
-            for (int i = 0; i < playerIDs.length; i++){
-                insertRows += "(" + playerIDs[i] + "," + teamID + ")";
-                if (i != playerIDs.length - 1){
-                    insertRows += ",";
-                }
-            }
-            String insertQuery = "INSERT INTO IsInUserTeam VALUES " + insertRows;
-            Statement statement = connection.createStatement();
-            int rows_added = statement.executeUpdate(insertQuery);
-            String returnMessage = "";
-            if (rows_added >= 1){
-                returnMessage = "The selected player(s) have has been added to the team";
-            } else {
-                returnMessage = "The selected player(s) couldn't added to the team";
-            }
-            return returnMessage;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return String.format("Unable to add player(s) to the team: %s", e);
-        }
-    }
-    
 }

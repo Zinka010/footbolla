@@ -13,10 +13,23 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserContext } from "../contexts/userContext";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const { setUser } = useContext(UserContext);
+
+  const handleLogin = () => {
+    setUser({
+      username: username,
+      id: 2,
+      email: "aryamandhingra@gmail.com",
+    });
+    location.href = "/players";
+  };
   return (
     <Center minWidth="100%" minHeight="100vh" bg="gray.200" textAlign="left">
       <Box
@@ -31,10 +44,18 @@ const Login: React.FC = () => {
           <Heading size="lg">Log In</Heading>
           <FormControl>
             <FormLabel>Username</FormLabel>
-            <Input type="text"></Input>
+            <Input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            ></Input>
             <FormLabel>Password</FormLabel>
             <InputGroup>
-              <Input type={showPassword ? "text" : "password"}></Input>
+              <Input
+                value={password}
+                type={showPassword ? "text" : "password"}
+                onChange={(e) => setPassword(e.target.value)}
+              ></Input>
               <InputRightElement width="4.5rem">
                 <Button
                   h="1.75rem"
@@ -51,11 +72,7 @@ const Login: React.FC = () => {
                 Sign up here.
               </Link>
             </HStack>
-            <Button
-              mt="6"
-              bg="blue.200"
-              onClick={() => (location.href = "/players")}
-            >
+            <Button mt="6" bg="blue.200" onClick={() => handleLogin()}>
               Login
             </Button>
           </FormControl>
