@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @RestController
-public class AuthenticationApplication {
+public class UserLogin {
 
     final String username = "root"; // our default username is root
     final String password = "password"; // our default password is password
