@@ -15,7 +15,6 @@ export const useUserTeam = (teamId: number) => {
     fetchTeam();
   }, [teamId]);
 
-
   const addPlayer = (
     position: PlayerPositions,
     player: ExtendedPlayer
@@ -25,6 +24,35 @@ export const useUserTeam = (teamId: number) => {
       const playerFound = team?.players.find(
         (item) => item.player_id == player.player_id
       );
+
+      const positionFound = team?.positions.find(
+        (item) => item.position == position
+      );
+
+      if (playerFound && positionFound) {
+        const filteredPositions = team.positions.filter(
+          (item) =>
+            item.position != positionFound.position &&
+            item.player_id != playerFound.player_id
+        );
+        const filteredPlayers = team.players.filter(
+          (item) =>
+            item.player_id != positionFound.player_id &&
+            item.player_id != playerFound.player_id
+        );
+
+        const newPlayerPosition = {
+          player_id: player.player_id,
+          position,
+        };
+
+        setTeam({
+          ...team,
+          positions: [...filteredPositions, newPlayerPosition],
+          players: [player, ...filteredPlayers],
+        });
+        return true;
+      }
 
       if (playerFound) {
         // change players position to new position
@@ -43,11 +71,6 @@ export const useUserTeam = (teamId: number) => {
 
         return true;
       }
-
-      // 2. check if position already exists
-      const positionFound = team?.positions.find(
-        (item) => item.position == position
-      );
 
       if (positionFound) {
         const filteredPlayers = team.players.filter(

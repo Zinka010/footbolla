@@ -1,3 +1,5 @@
+import { PlayerPositions } from "../util/CONSTANTS";
+
 export type Player = {
   player_id: number;
   name: string;
@@ -46,4 +48,14 @@ export type ExtendedPlayer = Player & {
   overall_rating: number;
   shot_power: number;
   agility: number;
+};
+
+export type UserTeam = {
+  teamId: number;
+  team_name: string;
+  players: ExtendedPlayer[];
+  positions: {
+    player_id: number;
+    position: PlayerPositions;
+  }[];
 };
