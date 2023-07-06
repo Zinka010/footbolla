@@ -19,6 +19,7 @@ jar {
     manifest {
         attributes 'Main-Class': 'org.springframework.boot.loader.PropertiesLauncher'
     }
+    duplicatesStrategy = 'INCLUDE'
 }
 
 repositories {

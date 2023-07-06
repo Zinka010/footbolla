@@ -88,19 +88,6 @@ public class UserLogin {
             // Handle any database errors
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
-        // } finally {
-        //     // Close the database resources
-        //     try {
-        //         if (preparedStatement != null) {
-        //             preparedStatement.close();
-        //         }
-        //         if (connection != null) {
-        //             connection.close();
-        //         }
-        //     } catch (SQLException e) {
-        //         e.printStackTrace();
-        //     }
-        // }
         }
     }
 
@@ -145,22 +132,6 @@ public class UserLogin {
             // Handle any database errors
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
-        // } finally {
-        //     // Close the database resources
-        //     try {
-        //         if (resultSet != null) {
-        //             resultSet.close();
-        //         }
-        //         if (preparedStatement != null) {
-        //             preparedStatement.close();
-        //         }
-        //         if (connection != null) {
-        //             connection.close();
-        //         }
-        //     } catch (SQLException e) {
-        //         e.printStackTrace();
-        //     }
-        // }
         }
     }
 
