@@ -50,26 +50,34 @@ public class UserTeamController {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
             Integer teamID = request.getTeamId();
-            Integer[] playerIDs = request.getPlayerIDs();
+            PlayerObject[] players = request.players();
             StringBuilder insertRows = new StringBuilder();
 
-            for (int i = 0; i < playerIDs.length; i++){
-                insertRows.append("(").append(playerIDs[i]).append(",").append(teamID).append(")");
-                if (i != playerIDs.length - 1){
-                    insertRows.append(",");
+            String returnMessage = "The selected player(s) have has been added to the team";
+
+            for (PlayerObject player : players) {
+                Statement statement = connection.createStatement();
+                String selectStatement = "SELECT * FROM IsInUserTeam WHERE user_team_id = " + teamID + " AND (position = " + player.getPosition().ordinal() + " OR player_id = " + player.getPlayerId() + ")";
+                ResultSet res = statement.executeQuery(selectStatement);
+                int rowsUpdated = 0;
+
+                if (res.next()) {
+                    String updateStatement = "UPDATE IsInUserTeam SET player_id = " + player.getPlayerId() + ", position = " + player.getPosition().ordinal() +
+                            " WHERE user_team_id = " + teamID + " AND (position = " + player.getPosition().ordinal() + " OR player_id = " + player.getPlayerId() + ")" ;
+                    rowsUpdated = statement.executeUpdate(updateStatement);
+
+                } else {
+                    String insertStatement = "INSERT INTO IsInUserTeam VALUES " + "(" + player.getPlayerId() + ',' + teamID + ',' + player.getPosition().ordinal() + ")";
+                    rowsUpdated = statement.executeUpdate(insertStatement);
                 }
+
+                if (rowsUpdated == 0) {
+                    returnMessage = "The selected player(s) couldn't be added to the team";
+                }
+
+                statement.close();
             }
 
-            String insertQuery = "INSERT INTO IsInUserTeam VALUES " + insertRows;
-            Statement statement = connection.createStatement();
-            int rows_added = statement.executeUpdate(insertQuery);
-            String returnMessage = "";
-            if (rows_added >= 1){
-                returnMessage = "The selected player(s) have has been added to the team";
-            } else {
-                returnMessage = "The selected player(s) couldn't added to the team";
-            }
-            statement.close();
             return ResponseEntity.ok(returnMessage);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -108,21 +116,44 @@ public class UserTeamController {
             JSONArray res = new Util().resultToJsonArray(resultSet, connection);
             JSONObject object = new JSONObject();
 
-            String selectNameStatement = "SELECT team_name FROM UserTeams WHERE user_team_id = " + teamId;
-            ResultSet name = statement.executeQuery(selectNameStatement);
-
             object.put("teamId", teamId);
             object.put("players", res);
+
+            String selectNameStatement = "SELECT team_name FROM UserTeams WHERE user_team_id = " + teamId;
+            ResultSet name = statement.executeQuery(selectNameStatement);
 
             if(name.next()) {
                 object.put("team_name", name.getString("team_name"));
             }
 
-            return ResponseEntity.ok(object.toString());
+            String selectPositionStatement = "SELECT position, player_id FROM IsInUserTeam WHERE user_team_id = " + teamId;
+            ResultSet positionSet = statement.executeQuery(selectPositionStatement);
+            JSONArray positionRes = new Util().resultToJsonArray(positionSet, connection);
 
+            object.put("positions", positionRes);
+
+
+            return ResponseEntity.ok(object.toString());
         } catch (SQLException e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body("new JSONArray()");
+            return ResponseEntity.badRequest().body(new JSONArray().toString());
+        }
+    }
+
+    @GetMapping("/searchPlayers")
+    public ResponseEntity<String> searchPlayers(@RequestParam String q) {
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            Statement statement = connection.createStatement();
+
+            String search = "SELECT * FROM Players WHERE LOWER(name) LIKE LOWER('%" + q + "%') LIMIT 10";
+            ResultSet res = statement.executeQuery(search);
+            JSONArray result = new Util().resultToJsonArray(res, connection);
+
+            return ResponseEntity.ok(result.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(new JSONArray().toString());
         }
     }
 }

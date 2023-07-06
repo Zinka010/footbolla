@@ -79,9 +79,4 @@ public class BackendApplication {
             return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
         }
     }
-
-
-
-
-    
 }
