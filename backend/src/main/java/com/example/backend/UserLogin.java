@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.transaction.Transactional;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -26,7 +24,6 @@ public class UserLogin {
 
     // Endpoint for user signup
     @PostMapping("/signup")
-    @Transactional
     public ResponseEntity<String> signup(@RequestBody SignupRequest signupRequest) {
         String username = signupRequest.getUsername();
         String email = signupRequest.getEmail();

@@ -8,20 +8,6 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
-bootJar {
-    enabled = false
-}
-
-jar {
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-    manifest {
-        attributes 'Main-Class': 'org.springframework.boot.loader.PropertiesLauncher'
-    }
-    duplicatesStrategy = 'INCLUDE'
-}
-
 repositories {
     mavenCentral()
 }
@@ -34,7 +20,6 @@ dependencies {
     implementation group: 'org.json', name: 'json', version: '20230227'
     // https://mvnrepository.com/artifact/org.jooq/jooq
     implementation 'org.jooq:jooq:3.18.4'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'javax.persistence:persistence-api:1.0.2'
     implementation 'javax.transaction:javax.transaction-api:1.3'
 }
