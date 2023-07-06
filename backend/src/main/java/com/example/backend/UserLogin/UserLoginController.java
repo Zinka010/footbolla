@@ -1,6 +1,8 @@
-package com.example.backend;
+package com.example.backend.UserLogin;
 
 
+import com.example.backend.util.Util;
+import org.json.JSONArray;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,12 +16,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @RestController
-public class UserLogin {
+public class UserLoginController {
 
     final String username = "root"; // our default username is root
     final String password = "password"; // our default password is password
     final String dbName = "footyfiend"; // our current db name is footy_fiend
     final String url = "jdbc:mysql://127.0.0.1:3306/" + dbName;
+    Util util = new Util();
 
 
     // Endpoint for user signup
@@ -95,7 +98,7 @@ public class UserLogin {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
-        // Validate that the username and password fields are not empty
+        //Validate that the username and password fields are not empty
         if (username == null || password == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username and password are required.");
         }
@@ -109,18 +112,18 @@ public class UserLogin {
             connection = DriverManager.getConnection(this.url, this.username, this.password);
 
             // Prepare the SQL statement
-            String query = "SELECT * FROM users WHERE username = ? AND password = ?";
+            String query = "SELECT user_id, username, email FROM users WHERE username = ? AND password = ?";
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
 
             // Execute the query
             resultSet = preparedStatement.executeQuery();
+            JSONArray res = util.resultToJsonArray(resultSet, connection);
 
             // Check if the user exists and credentials are correct
-            if (resultSet.next()) {
-                // User authentication successful
-                return ResponseEntity.ok("Authentication successful.");
+            if (res.length() > 0) {
+                return ResponseEntity.ok(res.toString());
             } else {
                 // User authentication failed
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
@@ -129,61 +132,6 @@ public class UserLogin {
             // Handle any database errors
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
-        }
-    }
-
-    public static class SignupRequest {
-        private String username;
-        private String email;
-        private String password;
-
-        // Getters and setters
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-    }
-
-    public static class LoginRequest {
-        private String username;
-        private String password;
-
-        // Getters and setters
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
         }
     }
 }
