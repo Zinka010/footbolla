@@ -81,7 +81,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            Select a player for the <b>{position}</b> position
+            Select a player for the <b>{positionMap[position]}</b> position
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>

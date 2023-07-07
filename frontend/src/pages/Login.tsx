@@ -12,23 +12,39 @@ import {
   Link,
   Text,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import { UserContext } from "../contexts/userContext";
+import { login } from "../util/API";
+import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { setUser } = useContext(UserContext);
+  const toast = useToast();
+  const navigate = useNavigate();
 
-  const handleLogin = () => {
-    setUser({
-      username: username,
-      id: 2,
-      email: "aryamandhingra@gmail.com",
-    });
-    location.href = "/players";
+  const handleLogin = async () => {
+    const response = await login(username, password);
+
+    if (!response.success) {
+      toast({
+        colorScheme: "red",
+        title: response.message,
+        position: "top",
+      });
+    } else {
+      toast({
+        colorScheme: "green",
+        title: "Login successful",
+        position: "top",
+      });
+      setUser(response.user);
+      navigate("/players");
+    }
   };
   return (
     <Center minWidth="100%" minHeight="100vh" bg="gray.200" textAlign="left">
