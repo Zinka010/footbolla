@@ -1,5 +1,6 @@
 package com.example.backend.UserTeams;
 
+import com.example.backend.Constants;
 import com.example.backend.util.Util;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,15 +14,11 @@ import java.util.List;
 
 @RestController
 public class UserTeamController {
-    final String username = "root"; // our default username is root
-    final String password = "password"; // our default password is password
-    final String dbName = "footyfiend"; // our current db name is footy_fiend
-    final String url = "jdbc:mysql://127.0.0.1:3306/" + dbName;
 
     @PostMapping("/createUserTeam/{userId}/teamName/{teamName}")
     public ResponseEntity<String> createUserTeam(@PathVariable Integer userId, @PathVariable String teamName) {
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
             String insertQuery = "INSERT INTO UserTeams (team_name) VALUES('" + teamName + "')";
             Statement statement = connection.createStatement();
             int rows_added = statement.executeUpdate(insertQuery, Statement.RETURN_GENERATED_KEYS);
@@ -48,7 +45,7 @@ public class UserTeamController {
     @PostMapping("/addToUserTeam")
     public ResponseEntity<String> addPlayerToUserTeam(@RequestBody AddToUserTeamRequest request) {
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
             Integer teamID = request.getTeamId();
             PlayerObject[] players = request.players();
             StringBuilder insertRows = new StringBuilder();
@@ -88,7 +85,7 @@ public class UserTeamController {
     @GetMapping("/getUserTeams/{userId}")
     public ResponseEntity<List<UserTeamResponse>> getUserTeams(@PathVariable Integer userId) {
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
             Statement statement = connection.createStatement();
             String selectStatment = "SELECT u.team_name, u.user_team_id FROM UserTeams u, IsOwnerOf o WHERE o.user_id = " + userId + " AND o.user_team_id = u.user_team_id";
             ResultSet resultSet = statement.executeQuery(selectStatment);
@@ -108,12 +105,12 @@ public class UserTeamController {
     @GetMapping("/getTeam/{teamId}")
     public ResponseEntity<String> getTeam(@PathVariable Integer teamId) {
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
             Statement statement = connection.createStatement();
             String selectStatement = "SELECT Players.* FROM Players JOIN IsInUserTeam ON IsInUserTeam.player_id = Players.player_id " +
                     "JOIN UserTeams ON UserTeams.user_team_id = IsInUserTeam.user_team_id WHERE UserTeams.user_team_id = " + teamId;
             ResultSet resultSet = statement.executeQuery(selectStatement);
-            JSONArray res = new Util().resultToJsonArray(resultSet, connection);
+            JSONArray res = Util.resultToJsonArray(resultSet, connection);
             JSONObject object = new JSONObject();
 
             object.put("teamId", teamId);
@@ -128,7 +125,7 @@ public class UserTeamController {
 
             String selectPositionStatement = "SELECT position, player_id FROM IsInUserTeam WHERE user_team_id = " + teamId;
             ResultSet positionSet = statement.executeQuery(selectPositionStatement);
-            JSONArray positionRes = new Util().resultToJsonArray(positionSet, connection);
+            JSONArray positionRes = Util.resultToJsonArray(positionSet, connection);
 
             object.put("positions", positionRes);
 
@@ -143,12 +140,12 @@ public class UserTeamController {
     @GetMapping("/searchPlayers")
     public ResponseEntity<String> searchPlayers(@RequestParam String q) {
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
             Statement statement = connection.createStatement();
 
             String search = "SELECT * FROM Players WHERE LOWER(name) LIKE LOWER('%" + q + "%') LIMIT 10";
             ResultSet res = statement.executeQuery(search);
-            JSONArray result = new Util().resultToJsonArray(res, connection);
+            JSONArray result = Util.resultToJsonArray(res, connection);
 
             return ResponseEntity.ok(result.toString());
         } catch (SQLException e) {
