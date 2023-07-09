@@ -7,6 +7,7 @@ import {
   Stack,
   StackDivider,
   Text,
+  Link
 } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
 import { Card, CardBody } from "@chakra-ui/card";
@@ -59,7 +60,11 @@ const TeamRoster: React.FC<TeamProfileProps> = ({ team_id }) => {
               {roster.map((player) => {
                 return (
                   <Box>
-                    <Text  pt="2" fontSize="md">{player?.name}</Text>
+                    <Link 
+                      style={{textDecorationLine: 'underline'}} 
+                      href={`/player/${player.player_id}`}>
+                        {player?.name}
+                      </Link>
                     <Text pt="2" fontSize="sm">{player?.season}</Text>
                   </Box>
                 )
