@@ -17,12 +17,40 @@ import java.util.ArrayList;
 @RestController
 public class TeamController {
     @GetMapping("/team")
-    public ResponseEntity<String> getTeam(@RequestParam(name = "startIdx", defaultValue = "0") Integer startIdx,
-                                             @RequestParam(name = "endIdx", defaultValue = "50") Integer endIdx) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public ResponseEntity<String> getTeams(@RequestParam(name = "startIdx", defaultValue = "0") Integer startIdx,
+                                             @RequestParam(name = "endIdx", defaultValue = "50") Integer endIdx
+                                          ) throws SQLException {
         try {
             Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
-            String readMessageQuery = "SELECT team_id, team_short_name, team_long_name FROM Teams ORDER BY team_long_name"
-                    + " LIMIT " + startIdx + ", " + endIdx;
+
+            // Since LIMIT A, B returns B starting at row A
+            if (startIdx > endIdx) {
+                startIdx = 0;
+                endIdx = 50;
+            }
+
+            String readMessageQuery = "SELECT team_id, team_short_name, team_long_name FROM Teams ORDER BY team_short_name"
+                    + " LIMIT " + startIdx + ", " + (endIdx - startIdx);;
+
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(readMessageQuery);
+            JSONArray res = Util.resultToJsonArray(resultSet, connection);
+
+            return ResponseEntity.ok(res.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
+        }
+    }
+
+    @GetMapping("/team/{team_id}")
+    public ResponseEntity<String> getTeams(@PathVariable String team_id) throws SQLException {
+        try {
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
+
+
+            String readMessageQuery = "SELECT * FROM Teams WHERE team_id = " + team_id;
+
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
             JSONArray res = Util.resultToJsonArray(resultSet, connection);
@@ -50,13 +78,11 @@ public class TeamController {
         }
     }
 
-    @GetMapping("/team/{team_id}")
-    public ResponseEntity<String> getTeamById(@PathVariable String team_id,
-                                             @RequestParam(name = "startIdx", defaultValue = "0") Integer startIdx,
-                                             @RequestParam(name = "endIdx", defaultValue = "50") Integer endIdx) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    @GetMapping("/teamPlayers/{team_id}")
+    public ResponseEntity<String> getTeamPlayersById(@PathVariable String team_id) throws SQLException {
         try {
             Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
-            String readMessageQuery = "SELECT T.team_long_name, P.name, PTH.season FROM footyfiend.Teams as T, footyfiend.PlayerTeamHistory AS PTH,"
+            String readMessageQuery = "SELECT P.name, PTH.season FROM footyfiend.Teams as T, footyfiend.PlayerTeamHistory AS PTH,"
                         + " footyfiend.Players AS P WHERE PTH.team_id = T.team_id AND P.player_id = PTH.player_id AND PTH.team_id = " + team_id;
 
             // PTH.team_id = 2;

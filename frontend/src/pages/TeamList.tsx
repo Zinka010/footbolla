@@ -1,7 +1,6 @@
 import {
     Box,
     Center,
-    HStack,
     Heading,
     Table,
     TableContainer,
@@ -50,6 +49,9 @@ import {
                     <Th>Team ID</Th>
                     <Th>Team Short Name</Th>
                     <Th>Team Long Name</Th>
+                    {/* Empty Th tags to ensure the horiztonal line also covers the link rows */}
+                    <Th></Th>
+                    <Th></Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -59,13 +61,22 @@ import {
                         <Td>{team.team_id}</Td>
                         <Td>{team.team_short_name}</Td>
                         <Td>{team.team_long_name}</Td>
-                        
+
                         <Td>
-                            <HStack justifyContent="space-between">
-                            <p>{team.team_long_name}</p>
-                            <Link href={`/team/${team.team_id}`}>View</Link>
-                            </HStack>
+                            <Link 
+                            style={{textDecorationLine: 'underline'}} 
+                            href={`/team/${team.team_id}`}>
+                                More Info
+                            </Link>
                         </Td>
+                        <Td>
+                            <Link 
+                            style={{textDecorationLine: 'underline'}} 
+                            href={`/roster/${team.team_id}`}>
+                                Roster
+                            </Link>
+                        </Td>
+                        
                       </Tr>
                     );
                   })}

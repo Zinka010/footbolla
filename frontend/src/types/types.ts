@@ -65,3 +65,33 @@ export type Team = {
   team_short_name: string;
   team_long_name: string;
 }
+
+export type TeamExtendedInfo = {
+  team_id: number;
+  team_short_name: string;
+  team_long_name: string;
+  team_api_id: number;
+  buildUpPlaySpeed: number;
+  buildUpPlaySpeedClass: string;
+  buildUpPlaySpeedDribbling: number;
+  buildUpPlayDribblingClass: string;
+  buildUpPlayPassing: number;
+  buildUpPlayPositioningClass: string;
+  chanceCreationPassing: number;
+  chanceCreationPassingClass: string;
+  chanceCreationCrossing: number;
+  chanceCreationCrossingClass: string;
+  chanceCreationShooting: number;
+  chanceCreationShootingClass: string;
+  chanceCreationPositioningClass: string;
+  defencePressure: number;
+  defencePressureClass: string;
+  defenceAgression: number;
+  defenceAgressionClass: string;
+  defenceTeamWidth: number;
+  defenceTeamWidthClass: string;
+  defenceDefenderLineClass: string;
+}
+
+
+
