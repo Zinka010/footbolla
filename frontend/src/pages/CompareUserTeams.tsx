@@ -30,13 +30,6 @@ import { predictWinner } from "../util/API";
 
 const UserTeamList: React.FC = () => {
   const { user } = useContext(UserContext);
-  const [teamList, setTeamList] = useState<
-    | {
-        teamId: number;
-        teamName: string;
-      }[]
-    | null
-  >(null);
   const [inputTeamName1, setInputTeamName1] = useState<string>("");
   const [inputTeamName2, setInputTeamName2] = useState<string>("");
   const [teamName1, setTeamName1] = useState<string>("None");
@@ -44,7 +37,6 @@ const UserTeamList: React.FC = () => {
   const [winner, setWinner] = useState<string>("");
   const { isOpen, onClose, onOpen } = useDisclosure();
   const { isOpen: isOpen2, onClose: onClose2, onOpen: onOpen2 } = useDisclosure();
-  const toast = useToast();
 
   const setTeam1 = () => {
       setTeamName1("New");
@@ -52,29 +44,10 @@ const UserTeamList: React.FC = () => {
   const setTeam2 = () => {
         setTeamName2("New");
       };
-
   const setWinner1 = () => {
           const a = predictWinner(teamName1, teamName2);
           setWinner(a);
       };
-
-  const getTeams = useCallback(async () => {
-    if (user) {
-      const url = `${API_URL}/getUserTeams/${user.id}`;
-      const data = await fetch(url);
-      const res = await data.json();
-
-      if (res && res.length) {
-        setTeamList(res);
-      } else {
-        setTeamList([]);
-      }
-    }
-  }, [user]);
-
-  useEffect(() => {
-    getTeams();
-  }, [user, getTeams]);
 
   return (
     <>
