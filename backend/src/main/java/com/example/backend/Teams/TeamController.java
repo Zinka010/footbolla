@@ -1,10 +1,8 @@
 package com.example.backend.Teams;
 
 import com.example.backend.Constants;
-import com.example.backend.Players.PlayerController;
 import com.example.backend.util.Util;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.*;
-import java.util.ArrayList;
 
 @RestController
 public class TeamController {
@@ -78,8 +75,8 @@ public class TeamController {
         }
     }
 
-    @GetMapping("/teamPlayers/{team_id}")
-    public ResponseEntity<String> getTeamPlayersById(@PathVariable String team_id) throws SQLException {
+    @GetMapping("/roster/{team_id}")
+    public ResponseEntity<String> getTeamRosterById(@PathVariable String team_id) throws SQLException {
         try {
             Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
             String readMessageQuery = "SELECT P.name, PTH.season FROM footyfiend.Teams as T, footyfiend.PlayerTeamHistory AS PTH,"
