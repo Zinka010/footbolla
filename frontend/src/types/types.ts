@@ -59,3 +59,9 @@ export type UserTeam = {
     position: PlayerPositions;
   }[];
 };
+
+export type Team = {
+  team_id: number;
+  team_short_name: string;
+  team_long_name: string;
+}

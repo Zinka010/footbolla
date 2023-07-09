@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class Util {
+
+    // Source https://github.com/eugenp/tutorials/blob/master/persistence-modules/core-java-persistence-2/src/main/java/com/baeldung/resultset2json/ResultSet2JSON.java
+    // Released under MIT License
     public static JSONArray resultToJsonArray(ResultSet resultSet, Connection dbConnection) throws SQLException {
         ResultSetMetaData md = resultSet.getMetaData();
         int numCols = md.getColumnCount();
