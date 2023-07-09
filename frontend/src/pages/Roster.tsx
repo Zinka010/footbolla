@@ -9,7 +9,7 @@ import {
   Text,
 } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
-import { Card, CardBody, CardHeader } from "@chakra-ui/card";
+import { Card, CardBody } from "@chakra-ui/card";
 import { Player } from "../types/types";
 import { API_URL } from "../util/CONSTANTS";
 import { Spinner } from "@chakra-ui/react";
@@ -44,7 +44,7 @@ const TeamRoster: React.FC<TeamProfileProps> = ({ team_id }) => {
     getTeam();
   }, [team_id]);
 
-  // here we fetch the team profile from the backend
+  // here we fetch the team roster from the backend
   return (
     <Box minWidth="300px" bg="white" rounded="2xl" m={20} p={16}>
       <Heading size="3xl" mb={10}>
@@ -57,16 +57,14 @@ const TeamRoster: React.FC<TeamProfileProps> = ({ team_id }) => {
               <Stack divider={<StackDivider />} spacing={4}>
 
               {roster.map((player) => {
-                
                 return (
                   <Box>
                     <Text  pt="2" fontSize="md">{player?.name}</Text>
                     <Text pt="2" fontSize="sm">{player?.season}</Text>
                   </Box>
                 )
-            
               })}
-                
+
               </Stack>
             </CardBody>
           </>
