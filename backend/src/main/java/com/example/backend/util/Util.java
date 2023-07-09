@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class Util {
-    public JSONArray resultToJsonArray(ResultSet resultSet, Connection dbConnection) throws SQLException {
+    public static JSONArray resultToJsonArray(ResultSet resultSet, Connection dbConnection) throws SQLException {
         ResultSetMetaData md = resultSet.getMetaData();
         int numCols = md.getColumnCount();
         List<String> colNames = IntStream.range(0, numCols)

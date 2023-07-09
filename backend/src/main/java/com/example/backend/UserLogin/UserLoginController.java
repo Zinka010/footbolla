@@ -1,6 +1,7 @@
 package com.example.backend.UserLogin;
 
 
+import com.example.backend.Constants;
 import com.example.backend.util.Util;
 import org.json.JSONArray;
 import org.springframework.http.HttpStatus;
@@ -17,13 +18,6 @@ import java.sql.SQLException;
 
 @RestController
 public class UserLoginController {
-
-    final String username = "root"; // our default username is root
-    final String password = "password"; // our default password is password
-    final String dbName = "footyfiend"; // our current db name is footy_fiend
-    final String url = "jdbc:mysql://127.0.0.1:3306/" + dbName;
-    Util util = new Util();
-
 
     // Endpoint for user signup
     @PostMapping("/signup")
@@ -43,7 +37,7 @@ public class UserLoginController {
 
         try {
             // Connect to the MySQL database
-            connection = DriverManager.getConnection(this.url, this.username, this.password);
+            connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
 
             // Check if the username is already taken
             String checkUsernameQuery = "SELECT * FROM users WHERE username = ?";
@@ -109,7 +103,7 @@ public class UserLoginController {
 
         try {
             // Connect to the MySQL database
-            connection = DriverManager.getConnection(this.url, this.username, this.password);
+            connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
 
             // Prepare the SQL statement
             String query = "SELECT user_id, username, email FROM users WHERE username = ? AND password = ?";
@@ -119,7 +113,7 @@ public class UserLoginController {
 
             // Execute the query
             resultSet = preparedStatement.executeQuery();
-            JSONArray res = util.resultToJsonArray(resultSet, connection);
+            JSONArray res = Util.resultToJsonArray(resultSet, connection);
 
             // Check if the user exists and credentials are correct
             if (res.length() > 0) {
