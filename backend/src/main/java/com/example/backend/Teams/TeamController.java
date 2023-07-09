@@ -85,12 +85,9 @@ public class TeamController {
             String readMessageQuery = "SELECT P.name, PTH.season FROM footyfiend.Teams as T, footyfiend.PlayerTeamHistory AS PTH,"
                         + " footyfiend.Players AS P WHERE PTH.team_id = T.team_id AND P.player_id = PTH.player_id AND PTH.team_id = " + team_id;
 
-            // PTH.team_id = 2;
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
             JSONArray res = Util.resultToJsonArray(resultSet, connection);
-
-            System.out.println(res);
 
             return ResponseEntity.ok(res.toString());
         } catch (SQLException e) {

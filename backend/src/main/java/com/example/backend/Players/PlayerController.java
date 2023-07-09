@@ -66,8 +66,6 @@ public class PlayerController {
             }
         }
 
-        System.out.println(sb.toString());
-
         String readMessageQuery =  sb.toString();
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(readMessageQuery);
