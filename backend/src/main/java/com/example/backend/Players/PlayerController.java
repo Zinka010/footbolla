@@ -8,27 +8,52 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.yaml.snakeyaml.events.Event;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 public class PlayerController {
+
+    /**
+     *  Helper function to get players in inclusive range of ID's
+     *
+     * @param startId Start of the ID range
+     * @param endId End of the ID range
+     * @param extendedInfo Whether to return all info on the player
+     * @return JSONArray containing the result of the function
+     * @throws SQLException Throw exception on invalid SQL query
+     */
+    private JSONArray getPlayersByIdRange(Integer startId, Integer endId, boolean extendedInfo) throws SQLException {
+        Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT ");
+
+        if (extendedInfo) {
+            sb.append(" * ");
+        } else {
+            sb.append(" player_id, name, birthday, height, weight ");
+        }
+
+        sb.append("FROM Players WHERE player_id >= ");
+        sb.append(startId);
+        sb.append(" AND player_id  <= ");
+        sb.append(endId);
+
+        String readMessageQuery =  sb.toString();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(readMessageQuery);
+        JSONArray res = Util.resultToJsonArray(resultSet, connection);
+        statement.close();
+
+        return res;
+    }
 
     @GetMapping("/players")
     public ResponseEntity<String> getPlayers(@RequestParam(name = "startId", defaultValue = "0") Integer startId,
                                              @RequestParam(name = "endId", defaultValue = "50") Integer endId) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
-            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
-            String readMessageQuery = "SELECT player_id, name, birthday, height, weight FROM Players WHERE player_id >="
-                    + startId + " AND player_id < " + endId;
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(readMessageQuery);
-            JSONArray res = Util.resultToJsonArray(resultSet, connection);
-
-            return ResponseEntity.ok(res.toString());
+            return ResponseEntity.ok(getPlayersByIdRange(startId, endId, false).toString());
         } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
@@ -41,6 +66,7 @@ public class PlayerController {
         try {
             Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
             String readMessageQuery = "SELECT COUNT(*) AS playerCount FROM Players";
+
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
             JSONArray res = Util.resultToJsonArray(resultSet, connection);
@@ -52,36 +78,10 @@ public class PlayerController {
         }
     }
 
-    public static JSONArray getPlayersById(List<String> IDs) throws SQLException {
-        Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT * FROM Players WHERE ");
-
-        for (int i = 0; i < IDs.size(); ++i) {
-            sb.append("player_id = ");
-            sb.append(IDs.get(i));
-            if (i != IDs.size() - 1) {
-                sb.append(" OR ");
-            }
-        }
-
-        String readMessageQuery =  sb.toString();
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(readMessageQuery);
-        JSONArray res = Util.resultToJsonArray(resultSet, connection);
-        statement.close();
-
-        return res;
-    }
-
     @GetMapping("/player/{ID}")
-    public ResponseEntity<String> getPlayerByIDEndpoint(@PathVariable String ID) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public ResponseEntity<String> getPlayerByIDEndpoint(@PathVariable Integer ID) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
-            List<String> IDs = new ArrayList<>();
-            IDs.add(ID);
-
-            return ResponseEntity.ok(getPlayersById(IDs).toString());
+            return ResponseEntity.ok(getPlayersByIdRange(ID, ID, true).toString());
         } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
