@@ -44,9 +44,7 @@ const TeamProfile: React.FC<TeamProfileProps> = ({ team_id }) => {
     getTeam();
   }, [team_id]);
 
-//   const [team]
-
-  // here we fetch the player profile from the backend
+  // here we fetch the team profile from the backend
   return (
     <Box minWidth="300px" bg="white" rounded="2xl" m={20} p={16}>
       <Heading size="3xl" mb={10}>
