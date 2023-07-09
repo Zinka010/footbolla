@@ -80,7 +80,8 @@ public class TeamController {
         try {
             Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
             String readMessageQuery = "SELECT P.name, PTH.season FROM footyfiend.Teams as T, footyfiend.PlayerTeamHistory AS PTH,"
-                        + " footyfiend.Players AS P WHERE PTH.team_id = T.team_id AND P.player_id = PTH.player_id AND PTH.team_id = " + team_id;
+                        + " footyfiend.Players AS P WHERE PTH.team_id = T.team_id AND P.player_id = PTH.player_id AND PTH.team_id = " + team_id
+                    + " ORDER BY PTH.season, P.name";
 
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
