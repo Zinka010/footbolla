@@ -8,6 +8,8 @@ import UserTeam from "./pages/UserTeam";
 import UserTeamList from "./pages/UserTeamList";
 import { useContext } from "react";
 import { UserContext } from "./contexts/userContext";
+import TeamList from "./pages/TeamList";
+import Team from "./pages/Team";
 
 const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const userContext = useContext(UserContext);
@@ -26,6 +28,22 @@ const App: React.FC = () => {
         element={
           <RequireAuth>
             <PlayerList />
+          </RequireAuth>
+        }
+      ></Route>
+      <Route
+        path="/teams"
+        element={
+          <RequireAuth>
+            <TeamList />
+          </RequireAuth>
+        }
+      ></Route>
+      <Route
+        path="/team/:teamId"
+        element={
+          <RequireAuth>
+            <Team />
           </RequireAuth>
         }
       ></Route>
