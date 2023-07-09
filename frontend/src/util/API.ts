@@ -153,3 +153,21 @@ export const login = async (
     message: "Login successful",
   };
 };
+
+export const predictWinner = async (
+  team1Id: string,
+  team2Id: string
+): Promise<string> => {
+  try {
+      const url = `${API_URL}/predictWinner/${team1Id}/${team2Id}`;
+      const res = await fetch(url, { method: "POST" });
+      if (res.status == 200) {
+        return res;
+      } else {
+        return "";
+      }
+    } catch (e) {
+      console.error(e);
+      return "";
+    }
+};

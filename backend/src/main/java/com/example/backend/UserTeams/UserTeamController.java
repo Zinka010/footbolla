@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -151,6 +152,46 @@ public class UserTeamController {
         } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(new JSONArray().toString());
+        }
+    }
+
+    private JSONArray getUserTeamScore(@PathVariable String team_id) throws SQLException {
+
+        Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
+        String getTeamScore = "With team_player_ids AS (SELECT player_id from isInUserTeam where user_team_id = " + team_id + ")\n" +
+                "(SELECT (sum(finishing) + sum(dribbling) + sum(sprint_speed) + sum(strength) + sum(aggression) + sum(interceptions))/COUNT(*) AS team_score FROM team_player_ids natural join Players);";
+
+        System.out.println(getTeamScore);
+        Statement statement = connection.createStatement();
+        ResultSet resultSet1 = statement.executeQuery(getTeamScore);
+        JSONArray res1 = Util.resultToJsonArray(resultSet1, connection);
+        statement.close();
+
+        return res1;
+
+    }
+
+    @GetMapping("/predictWinner/{team1_id}/{team2_id}")
+    public ResponseEntity<String> predictWinner(@PathVariable String team1_id, @PathVariable String team2_id) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        try {
+
+            JSONArray getTeam1Score = getUserTeamScore(team1_id);
+            JSONArray getTeam2Score = getUserTeamScore(team2_id);
+            BigDecimal team1Score = (BigDecimal) getTeam1Score.getJSONObject(0).get("team_score");
+            BigDecimal team2Score = (BigDecimal) getTeam2Score.getJSONObject(0).get("team_score");
+            System.out.println(team1Score);
+            System.out.println(team2Score);
+
+            JSONArray res = new JSONArray();
+            if (team1Score.compareTo(team2Score) == 1) {
+                res.put(team1_id);
+            } else {
+                res.put(team2_id);
+            }
+            return ResponseEntity.ok(res.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
         }
     }
 }

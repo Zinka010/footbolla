@@ -49,6 +49,13 @@ const Navbar: React.FC = () => {
           fontWeight={location.pathname == "/leagues" ? 700 : 400}
         >
           Leagues
+
+        </Link>
+        <Link
+          href="/predictWinner"
+          fontWeight={location.pathname == "/predictWinner" ? 700 : 400}
+        >
+        Compare My Teams
         </Link>
       </HStack>
       {user && (
