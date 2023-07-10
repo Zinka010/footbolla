@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.*;
+import java.util.Objects;
 
 @RestController
 public class PlayerController {
@@ -90,30 +91,40 @@ public class PlayerController {
 
     @GetMapping("/getWithFilters")
     public ResponseEntity<String> getWithFilter(@RequestParam(name = "team", defaultValue = "") String team, @RequestParam(name = "league", defaultValue = "") String league,
-                                                @RequestParam(name = "position", defaultValue = "null") Integer position, @RequestParam(name = "playerName", defaultValue = "") String playerName,
-                                                @RequestParam(name = "rating", defaultValue = "false") boolean rating, @RequestParam(name = "speed", defaultValue = "false") boolean speed) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+                                                @RequestParam(name = "position", defaultValue = "-1") Integer position, @RequestParam(name = "playerName", defaultValue = "") String playerName,
+                                                @RequestParam(name = "rating", defaultValue = "false") boolean rating, @RequestParam(name = "speed", defaultValue = "false") boolean speed,
+                                                @RequestParam(name = "startId", defaultValue = "0") Integer startId, @RequestParam(name = "endId", defaultValue = "50") Integer endId) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
             Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
             String readMessageQuery = "SELECT * ";
 
-            if (team != ""){
-                readMessageQuery += "FILTER(Teams.team_long_name like \"%" + team + "%\") FROM Teams";
-            } else if (league != ""){
-                readMessageQuery += "FILTER(Leagues.league_name like \"%" + league + "%\") FROM Leagues";
-            } else if (position != null || playerName != ""){
-                readMessageQuery += "FILTER(Players.name like \"%" + playerName + "%\"),  FILTER(Players.positioning like \"%" + position + "%\") FROM Players";
+            if (!Objects.equals(team, "")){
+                readMessageQuery = readMessageQuery + "FROM Teams WHERE Teams.team_long_name LIKE '%" + team + "%'";
+            } else if (!Objects.equals(league, "")){
+                readMessageQuery = readMessageQuery + "FROM Leagues WHERE Leagues.league_name LIKE '%" + league + "%'";
+            } else if (!Objects.equals(position, -1) || !Objects.equals(playerName, "")){
+                readMessageQuery = "SELECT player_id, name, birthday, height, weight FROM Players WHERE player_id >= " + startId + " AND player_id <= " + endId + " AND ";
+                if (!Objects.equals(playerName, "")){
+                    readMessageQuery = readMessageQuery + "Players.name LIKE '%" + playerName + "%'";
+                }
+                if (!Objects.equals(position, -1) && !Objects.equals(playerName, "")){
+                    readMessageQuery = readMessageQuery + " AND ";
+                }
+                if (!Objects.equals(position, -1)){
+                    readMessageQuery = readMessageQuery + "Players.positioning = " + position;
+                }
             }
 
             if (rating || speed){
                 readMessageQuery += " ORDER BY";
                 if (rating){
-                    readMessageQuery += " rating";
+                    readMessageQuery = readMessageQuery + " rating";
                 }
                 if (rating && speed){
-                    readMessageQuery += ",";
+                    readMessageQuery = readMessageQuery + ",";
                 }
                 if (speed){
-                    readMessageQuery += " speed";
+                    readMessageQuery = readMessageQuery + " speed";
                 }
             }
             Statement statement = connection.createStatement();

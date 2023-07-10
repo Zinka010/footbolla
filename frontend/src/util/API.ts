@@ -61,9 +61,11 @@ export const getWithFilters = async (
   playerName: string,
   rating: boolean,
   speed: boolean,
+  start: number,
+  end: number
 ): Promise<any[]> => {
   try {
-    const url = `${API_URL}/getWithFilters?team=${encodeURIComponent(team)}&league=${encodeURIComponent(league)}&position=${encodeURIComponent(position)}&playerName=${encodeURIComponent(playerName)}&rating=${encodeURIComponent(rating)}&speed=${encodeURIComponent(speed)}`;
+    const url = `${API_URL}/getWithFilters?team=${encodeURIComponent(team)}&league=${encodeURIComponent(league)}&position=${encodeURIComponent(position)}&playerName=${encodeURIComponent(playerName)}&rating=${encodeURIComponent(rating)}&speed=${encodeURIComponent(speed)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
     const res = await fetch(url);
     const data = await res.json();
 

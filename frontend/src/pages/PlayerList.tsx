@@ -13,6 +13,7 @@ import {
   Link,
   ButtonGroup,
   Button,
+  Input,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import usePlayers from "../hooks/usePlayers";
@@ -20,8 +21,9 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { SearchBar } from "../components/SearchBar";
 import { debounce } from "lodash";
 import { useFilterSearch } from "../hooks/useFilterSearch";
-import { Player } from "../types/types";
 import { PlayerPositions } from "../util/CONSTANTS"
+
+let switcher = false;
 
 const PlayerList: React.FC = () => {
   const {
@@ -32,32 +34,57 @@ const PlayerList: React.FC = () => {
     isAtEnd,
   } = usePlayers();
 
-  const { playerResults: playerResults, filterSearch: playerFilterSearch } = useFilterSearch();
+  const { 
+    playerResults: playerResults, 
+    filterSearch: playerFilterSearch,
+    fetchNextPageOfPlayersFilter,
+    fetchPreviousPageOfPlayersFilter,
+    isAtStartFilter,
+    isAtEndFilter
+  } = useFilterSearch();
 
   interface IFilters {
     team: string,
     league: string,
-    position: PlayerPositions,
+    position: PlayerPositions | number,
     playerName: string,
     rating: boolean,
     speed: boolean,
   };
 
-  let showResults: Player[];
-
-  const handleFilterSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value == ""){
-      showResults = players;
-    } else {
-      debouncedSearch(e.target.value);
-      showResults = playerResults;
-    }
+  const filters: IFilters = {
+    team: "",
+    league: "",
+    position: -1,
+    playerName: "",
+    rating: false,
+    speed: false
   }
 
-  const debouncedSearch = debounce(
-    (target: string) => playerFilterSearch("target"),
-    300
-  );
+  const handleFilterSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === ""){
+      switcher = false;
+    } else {
+      switcher = true;
+      debouncedSearch(e.target.value);
+    }
+    console.log(switcher + " " + e.target.value);
+  }
+
+  const debouncedSearch = debounce((target: string) => {
+    filters.playerName = target;
+    playerFilterSearch(filters.team, filters.league, filters.position, filters.playerName, filters.rating, filters.speed);
+  });
+
+  const handleClickNext = () => {
+    fetchNextPageOfPlayersFilter();
+    playerFilterSearch(filters.team, filters.league, filters.position, filters.playerName, filters.rating, filters.speed);
+  }
+
+  const handleClickPrev = () => {
+    fetchPreviousPageOfPlayersFilter();
+    playerFilterSearch(filters.team, filters.league, filters.position, filters.playerName, filters.rating, filters.speed);
+  }
 
   return (
     <>
@@ -98,7 +125,7 @@ const PlayerList: React.FC = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {players.map((player) => {
+                {(switcher ? playerResults : players).map((player) => {
                   return (
                     <Tr key={player.player_id}>
                       <Td>{player.player_id}</Td>
@@ -120,16 +147,16 @@ const PlayerList: React.FC = () => {
           <Center mt={10}>
             <ButtonGroup isAttached variant={"outline"}>
               <Button
-                isDisabled={isAtStart}
+                isDisabled={switcher ? isAtStartFilter : isAtStart}
                 leftIcon={<ChevronLeftIcon />}
-                onClick={fetchPreviousPageOfPlayers}
+                onClick={switcher ? handleClickPrev : fetchPreviousPageOfPlayers}
               >
                 Prev
               </Button>
               <Button
-                isDisabled={isAtEnd}
+                isDisabled={switcher ? isAtEndFilter : isAtEnd}
                 rightIcon={<ChevronRightIcon />}
-                onClick={fetchNextPageOfPlayers}
+                onClick={switcher ? handleClickNext : fetchNextPageOfPlayers}
               >
                 Next
               </Button>
