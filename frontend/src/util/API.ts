@@ -155,19 +155,36 @@ export const login = async (
 };
 
 export const predictWinner = async (
-  team1Id: string,
-  team2Id: string
+  team1Id: number,
+  team2Id: number
 ): Promise<string> => {
   try {
-      const url = `${API_URL}/predictWinner/${team1Id}/${team2Id}`;
-      const res = await fetch(url, { method: "POST" });
-      if (res.status == 200) {
-        return res;
-      } else {
-        return "";
-      }
-    } catch (e) {
-      console.error(e);
+    const url = `${API_URL}/predictWinner/${team1Id}/${team2Id}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (res.status == 200) {
+      return data;
+    } else {
       return "";
     }
+  } catch (e) {
+    console.error(e);
+    return "";
+  }
+};
+
+export const getUserTeams = async (
+  userId: number
+): Promise<{ teamId: number; teamName: string }[]> => {
+  try {
+    const url = `${API_URL}/getUserTeams/${userId}`;
+    const data = await fetch(url);
+    const res = await data.json();
+
+    return res;
+  } catch (err) {
+    console.error(err);
+
+    return [];
+  }
 };

@@ -57,8 +57,6 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
       ? team.players.find((item) => item.player_id == playerPosition.player_id)
       : null;
 
-  console.log(team);
-
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) =>
     debouncedSearch(e.target.value);
 
@@ -181,12 +179,14 @@ const UserTeam: React.FC = () => {
                     colorScheme: "green",
                     title: `${teamName} has been successfully saved.`,
                     position: "top",
+                    isClosable: true,
                   });
                 } else {
                   toast({
                     colorScheme: "red",
                     title: `There was an error in saving ${teamName}`,
                     position: "top",
+                    isClosable: true,
                   });
                 }
               }}

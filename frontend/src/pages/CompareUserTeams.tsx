@@ -3,12 +3,8 @@ import {
   Button,
   Center,
   Divider,
-  FormControl,
-  FormLabel,
   HStack,
   Heading,
-  Input,
-  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -16,38 +12,51 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Spinner,
   useDisclosure,
-  useToast,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/userContext";
-import { API_URL } from "../util/CONSTANTS";
 import { PlusSquareIcon } from "@chakra-ui/icons";
-import { createNewTeam } from "../util/API";
-import { predictWinner } from "../util/API";
+import { predictWinner, getUserTeams } from "../util/API";
+
+interface Team {
+  teamId: number;
+  teamName: string;
+}
 
 const UserTeamList: React.FC = () => {
   const { user } = useContext(UserContext);
-  const [inputTeamName1, setInputTeamName1] = useState<string>("");
-  const [inputTeamName2, setInputTeamName2] = useState<string>("");
-  const [teamName1, setTeamName1] = useState<string>("None");
-  const [teamName2, setTeamName2] = useState<string>("None");
-  const [winner, setWinner] = useState<string>("");
+  const [teamList, setTeamList] = useState<Team[] | null>(null);
+  const [teamOne, setTeamOne] = useState<Team | null>(null);
+  const [teamTwo, setTeamTwo] = useState<Team | null>(null);
+  const [winner, setWinner] = useState<Team | null>(null);
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const { isOpen: isOpen2, onClose: onClose2, onOpen: onOpen2 } = useDisclosure();
+  const {
+    isOpen: isOpen2,
+    onClose: onClose2,
+    onOpen: onOpen2,
+  } = useDisclosure();
 
-  const setTeam1 = () => {
-      setTeamName1("New");
+  const getWinner = async () => {
+    if (teamOne && teamTwo) {
+      const winner = await predictWinner(teamOne?.teamId, teamTwo?.teamId);
+      const parsedWinner = Number(winner[0]);
+
+      setWinner(teamList?.find((team) => team.teamId == parsedWinner) || null);
+    }
+  };
+
+  useEffect(() => {
+    const getTeams = async () => {
+      if (user) {
+        const res = await getUserTeams(user.id);
+        setTeamList(res);
+      }
     };
-  const setTeam2 = () => {
-        setTeamName2("New");
-      };
-  const setWinner1 = () => {
-          const a = predictWinner(teamName1, teamName2);
-          setWinner(a);
-      };
+
+    getTeams();
+  }, [user]);
 
   return (
     <>
@@ -61,120 +70,119 @@ const UserTeamList: React.FC = () => {
           m={20}
           p={16}
         >
-
-        <Modal isOpen={isOpen} onClose={onClose}>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>Choose Team 1</ModalHeader>
-                <ModalCloseButton></ModalCloseButton>
-                <ModalBody>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      value={inputTeamName1}
-                      onChange={(e) => setInputTeamName1(e.target.value)}
-                    ></Input>
-                  </FormControl>
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    colorScheme="blue"
-                    mr={3}
-                    onClick={async () => {
-                      if (user) {
-                        setTeamName1(inputTeamName1);
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Choose Team 1</ModalHeader>
+              <ModalCloseButton></ModalCloseButton>
+              <ModalBody>
+                {teamList
+                  ?.filter((item) =>
+                    teamTwo ? teamTwo.teamId != item.teamId : true
+                  )
+                  .map((item) => (
+                    <Button
+                      key={item.teamId}
+                      mr={2}
+                      mt={2}
+                      variant={
+                        teamOne?.teamId == item.teamId ? "solid" : "outline"
                       }
+                      onClick={() => setTeamOne(item)}
+                    >
+                      {item.teamName}
+                    </Button>
+                  ))}
+              </ModalBody>
+              <ModalFooter>
+                <Button colorScheme="blue" mr={3} onClick={() => onClose()}>
+                  Choose
+                </Button>
+                <Button
+                  colorScheme="red"
+                  onClick={() => {
+                    onClose();
+                    setTeamOne(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
 
-                      onClose();
-                    }}
-                  >
-                    Choose
-                  </Button>
-                  <Button
-                    colorScheme="red"
-                    onClick={() => {
-                      onClose();
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-
-            <Modal isOpen={isOpen2} onClose={onClose2}>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>Choose Team 2</ModalHeader>
-                <ModalCloseButton></ModalCloseButton>
-                <ModalBody>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      value={inputTeamName2}
-                      onChange={(e) => setInputTeamName2(e.target.value)}
-                    ></Input>
-                  </FormControl>
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    colorScheme="blue"
-                    mr={3}
-                    onClick={async () => {
-                      if (user) {
-                        setTeamName2(inputTeamName2);
+          <Modal isOpen={isOpen2} onClose={onClose2}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Choose Team 2</ModalHeader>
+              <ModalCloseButton></ModalCloseButton>
+              <ModalBody>
+                {teamList
+                  ?.filter((item) =>
+                    teamOne ? teamOne.teamId != item.teamId : true
+                  )
+                  .map((item) => (
+                    <Button
+                      key={item.teamId}
+                      mr={2}
+                      mt={2}
+                      variant={
+                        teamTwo?.teamId == item.teamId ? "solid" : "outline"
                       }
+                      onClick={() => setTeamTwo(item)}
+                    >
+                      {item.teamName}
+                    </Button>
+                  ))}
+              </ModalBody>
+              <ModalFooter>
+                <Button colorScheme="blue" mr={3} onClick={() => onClose2()}>
+                  Choose
+                </Button>
+                <Button
+                  colorScheme="red"
+                  onClick={() => {
+                    setTeamTwo(null);
+                    onClose2();
+                  }}
+                >
+                  Cancel
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
 
-                      onClose2();
-                    }}
-                  >
-                    Choose
-                  </Button>
-                  <Button
-                    colorScheme="red"
-                    onClick={() => {
-                      onClose2();
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-
-
+          <Heading size="3xl" textAlign={"center"} mb={5}>
+            Compare My Teams
+          </Heading>
+          <Divider />
+          <Center mt={4}>
+            <HStack gap={10}>
+              <Button p={10} leftIcon={<PlusSquareIcon />} onClick={onOpen}>
+                {teamOne ? teamOne.teamName : "Choose team 1"}
+              </Button>
+              <Button p={10} leftIcon={<PlusSquareIcon />} onClick={onOpen2}>
+                {teamTwo ? teamTwo.teamName : "Choose team 2"}
+              </Button>
+            </HStack>
+          </Center>
 
           <HStack justifyContent="space-between">
-            <Heading size="3xl" textAlign={"left"} mb={5}>
-              Compare My Teams
+            <Heading size="2xl" textAlign={"left"} mb={5}>
+              {/* Your team 1 is: {teamName1} */}
             </Heading>
           </HStack>
-
-          <Button leftIcon={<PlusSquareIcon />} onClick={onOpen}>
-              Choose Team 1
-            </Button>
-            <Button leftIcon={<PlusSquareIcon />} onClick={onOpen2}>
-              Choose Team 2
-            </Button>
           <HStack justifyContent="space-between">
-          <Heading size="2xl" textAlign={"left"} mb={5}>
-                        Your team 1 is: {teamName1}
-                      </Heading>
+            <Heading size="2xl" textAlign={"left"} mb={5}>
+              {/* Your team 2 is: {teamName2} */}
+            </Heading>
           </HStack>
-          <HStack justifyContent="space-between">
-          <Heading size="2xl" textAlign={"left"} mb={5}>
-                        Your team 2 is: {teamName2}
-                      </Heading>
-          </HStack>
-          <Button onClick={setWinner1}>
-              Predict the Winner
-            </Button>
-          <HStack justifyContent="space-between">
-          <Heading size="2xl" textAlign={"left"} mb={5}>
-                        The winner is: {winner}
-                      </Heading>
-          </HStack>
-
+          <Button isDisabled={!teamOne || !teamTwo} onClick={getWinner}>
+            Predict the Winner
+          </Button>
+          <Heading size="xl" textAlign={"center"} my={5}>
+            {winner && `The winner is ${winner.teamName}`}
+          </Heading>
         </Box>
       </Center>
     </>

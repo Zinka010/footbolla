@@ -41,6 +41,7 @@ const Login: React.FC = () => {
         colorScheme: "green",
         title: "Login successful",
         position: "top",
+        isClosable: true,
       });
       setUser(response.user);
       navigate("/players");

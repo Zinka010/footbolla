@@ -23,9 +23,8 @@ import {
 import Navbar from "../components/Navbar";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/userContext";
-import { API_URL } from "../util/CONSTANTS";
 import { PlusSquareIcon } from "@chakra-ui/icons";
-import { createNewTeam } from "../util/API";
+import { createNewTeam, getUserTeams } from "../util/API";
 
 const UserTeamList: React.FC = () => {
   const { user } = useContext(UserContext);
@@ -42,15 +41,8 @@ const UserTeamList: React.FC = () => {
 
   const getTeams = useCallback(async () => {
     if (user) {
-      const url = `${API_URL}/getUserTeams/${user.id}`;
-      const data = await fetch(url);
-      const res = await data.json();
-
-      if (res && res.length) {
-        setTeamList(res);
-      } else {
-        setTeamList([]);
-      }
+      const res = await getUserTeams(user.id);
+      setTeamList(res);
     }
   }, [user]);
 
