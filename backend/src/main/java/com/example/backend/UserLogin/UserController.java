@@ -6,18 +6,12 @@ import com.example.backend.util.Util;
 import org.json.JSONArray;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 @RestController
-public class UserLoginController {
+public class UserController {
 
     // Endpoint for user signup
     @PostMapping("/signup")
@@ -26,7 +20,7 @@ public class UserLoginController {
         String email = signupRequest.getEmail();
         String password = signupRequest.getPassword();
 
-        // Perform validation on username and password
+        // Validate that the username and password fields are not empty
         if (username == null || password == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username and password are required.");
         }
@@ -92,7 +86,7 @@ public class UserLoginController {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
-        //Validate that the username and password fields are not empty
+        // Validate that the username and password fields are not empty
         if (username == null || password == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username and password are required.");
         }
@@ -126,6 +120,59 @@ public class UserLoginController {
             // Handle any database errors
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
+        }
+    }
+    @DeleteMapping("/deleteAccount")
+    public ResponseEntity<String> deleteUserAccount(@RequestBody DeleteRequest deleteRequest) {
+        String email = deleteRequest.getEmail();
+        String password = deleteRequest.getPassword();
+
+        //Validate that the username and password fields are not empty
+        if (email == null || password == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username and password are required.");
+        }
+
+        try {
+            // Create a connection to the database
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
+
+            String getUser_idQuery = "SELECT user_id FROM Users WHERE email = '"+ email+"'";
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(getUser_idQuery);
+            int obtainedID = -1;
+
+            if (resultSet.next()) {
+                obtainedID = resultSet.getInt(1);
+                System.out.println(obtainedID);
+            }
+
+            if (obtainedID > 0) {
+                System.out.println(obtainedID);
+                String deleteUserTeamQuery = "DELETE FROM UserTeams where user_team_id IN (SELECT user_team_id FROM isOwnerOf where user_id = ?)";
+                PreparedStatement preparedStatement_deleteUserTeam = connection.prepareStatement(deleteUserTeamQuery);
+                preparedStatement_deleteUserTeam.setInt(1, obtainedID);
+                int rowsAffected_deleteUserTeam = preparedStatement_deleteUserTeam.executeUpdate();
+            }
+
+            // Prepare the SQL query
+            String deleteUserQuery = "DELETE FROM Users WHERE email = ? AND password = ?";
+
+            // Create a prepared statement
+            PreparedStatement preparedStatement_deleteUser = connection.prepareStatement(deleteUserQuery);
+            preparedStatement_deleteUser.setString(1, email);
+            preparedStatement_deleteUser.setString(2, password);
+
+            // Execute the query
+            int rowsAffected = preparedStatement_deleteUser.executeUpdate();
+
+            if (rowsAffected == 0) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
+            }
+
+            return ResponseEntity.ok("User account deleted successfully");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

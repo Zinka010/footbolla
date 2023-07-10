@@ -11,6 +11,7 @@ import { UserContext } from "./contexts/userContext";
 import TeamList from "./pages/TeamList";
 import Team from "./pages/Team";
 import CompareUserTeams from "./pages/CompareUserTeams"
+import Roster from "./pages/Roster";
 
 const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const userContext = useContext(UserContext);
@@ -45,6 +46,14 @@ const App: React.FC = () => {
         element={
           <RequireAuth>
             <Team />
+          </RequireAuth>
+        }
+      ></Route>
+            <Route
+        path="/roster/:teamId"
+        element={
+          <RequireAuth>
+            <Roster />
           </RequireAuth>
         }
       ></Route>

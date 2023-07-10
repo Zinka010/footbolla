@@ -6,6 +6,7 @@ export type Player = {
   birthday: string;
   height: number;
   weight: number;
+  season: string;
 };
 
 export type ExtendedPlayer = Player & {
