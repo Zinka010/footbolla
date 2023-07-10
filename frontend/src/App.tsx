@@ -12,6 +12,7 @@ import TeamList from "./pages/TeamList";
 import Team from "./pages/Team";
 import CompareUserTeams from "./pages/CompareUserTeams"
 import Roster from "./pages/Roster";
+import LeagueList from "./pages/LeagueList";
 
 const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const userContext = useContext(UserContext);
@@ -49,7 +50,7 @@ const App: React.FC = () => {
           </RequireAuth>
         }
       ></Route>
-            <Route
+      <Route
         path="/roster/:teamId"
         element={
           <RequireAuth>
@@ -78,6 +79,14 @@ const App: React.FC = () => {
         element={
           <RequireAuth>
             <UserTeamList />
+          </RequireAuth>
+        }
+      ></Route>
+      <Route
+        path="/leagues"
+        element={
+          <RequireAuth>
+            <LeagueList />
           </RequireAuth>
         }
       ></Route>
