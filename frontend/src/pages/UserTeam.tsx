@@ -26,7 +26,7 @@ import Navbar from "../components/Navbar";
 import { useState } from "react";
 import { ExtendedPlayer, UserTeam } from "../types/types";
 import { PlusSquareIcon } from "@chakra-ui/icons";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { PlayerPositions, positionMap } from "../util/CONSTANTS";
 import { useUserTeam } from "../hooks/useUserTeam";
 import { useNameSearch } from "../hooks/useNameSearch";
@@ -148,6 +148,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
 const UserTeam: React.FC = () => {
   const params = useParams();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const teamId = params["teamId"];
   const teamName = searchParams.get("teamName");
@@ -182,6 +183,7 @@ const UserTeam: React.FC = () => {
                     title: `${teamName} has been successfully saved.`,
                     position: "top",
                   });
+                  navigate("/myTeams");
                 } else {
                   toast({
                     colorScheme: "red",
