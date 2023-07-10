@@ -160,8 +160,7 @@ public class UserTeamController {
         Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
         String getTeamScore = "With team_player_ids AS (SELECT player_id from isInUserTeam where user_team_id = " + team_id + ")\n" +
                 "(SELECT (sum(finishing) + sum(dribbling) + sum(sprint_speed) + sum(strength) + sum(aggression) + sum(interceptions))/COUNT(*) AS team_score FROM team_player_ids natural join Players);";
-
-        System.out.println(getTeamScore);
+        
         Statement statement = connection.createStatement();
         ResultSet resultSet1 = statement.executeQuery(getTeamScore);
         JSONArray res1 = Util.resultToJsonArray(resultSet1, connection);
