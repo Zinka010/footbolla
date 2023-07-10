@@ -87,4 +87,43 @@ public class PlayerController {
             return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
         }
     }
+
+    @GetMapping("/getWithFilters")
+    public ResponseEntity<String> getWithFilter(@RequestParam(name = "team", defaultValue = "") String team, @RequestParam(name = "league", defaultValue = "") String league,
+                                                @RequestParam(name = "position", defaultValue = "null") Integer position, @RequestParam(name = "playerName", defaultValue = "") String playerName,
+                                                @RequestParam(name = "rating", defaultValue = "false") boolean rating, @RequestParam(name = "speed", defaultValue = "false") boolean speed) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        try {
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
+            String readMessageQuery = "SELECT * ";
+
+            if (team != ""){
+                readMessageQuery += "FILTER(Teams.team_long_name like \"%" + team + "%\") FROM Teams";
+            } else if (league != ""){
+                readMessageQuery += "FILTER(Leagues.league_name like \"%" + league + "%\") FROM Leagues";
+            } else if (position != null || playerName != ""){
+                readMessageQuery += "FILTER(Players.name like \"%" + playerName + "%\"),  FILTER(Players.positioning like \"%" + position + "%\") FROM Players";
+            }
+
+            if (rating || speed){
+                readMessageQuery += " ORDER BY";
+                if (rating){
+                    readMessageQuery += " rating";
+                }
+                if (rating && speed){
+                    readMessageQuery += ",";
+                }
+                if (speed){
+                    readMessageQuery += " speed";
+                }
+            }
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(readMessageQuery);
+            JSONArray res = Util.resultToJsonArray(resultSet, connection);
+            statement.close();
+            return ResponseEntity.ok(res.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
+        }
+    }
 }

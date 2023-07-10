@@ -17,6 +17,11 @@ import {
 import Navbar from "../components/Navbar";
 import usePlayers from "../hooks/usePlayers";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { SearchBar } from "../components/SearchBar";
+import { debounce } from "lodash";
+import { useFilterSearch } from "../hooks/useFilterSearch";
+import { Player } from "../types/types";
+import { PlayerPositions } from "../util/CONSTANTS"
 
 const PlayerList: React.FC = () => {
   const {
@@ -26,6 +31,33 @@ const PlayerList: React.FC = () => {
     isAtStart,
     isAtEnd,
   } = usePlayers();
+
+  const { playerResults: playerResults, filterSearch: playerFilterSearch } = useFilterSearch();
+
+  interface IFilters {
+    team: string,
+    league: string,
+    position: PlayerPositions,
+    playerName: string,
+    rating: boolean,
+    speed: boolean,
+  };
+
+  let showResults: Player[];
+
+  const handleFilterSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value == ""){
+      showResults = players;
+    } else {
+      debouncedSearch(e.target.value);
+      showResults = playerResults;
+    }
+  }
+
+  const debouncedSearch = debounce(
+    (target: string) => playerFilterSearch("target"),
+    300
+  );
 
   return (
     <>
@@ -37,12 +69,23 @@ const PlayerList: React.FC = () => {
           bg="white"
           rounded="2xl"
           m={20}
+          mt={5}
           p={16}
           textAlign={"left"}
         >
           <Heading size="3xl" mb={10}>
             Players
           </Heading>
+          <Box
+            minWidth="50px"
+            width="300px"
+            bg="white"
+            rounded="2xl"
+            m={1}
+            p={2}
+          >
+            <SearchBar typeOnChange={handleFilterSearch} />
+          </Box>
           <TableContainer width="100%">
             <Table variant="simple">
               <Thead>

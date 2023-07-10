@@ -1,5 +1,5 @@
 import { API_URL, PlayerPositions } from "./CONSTANTS";
-import { ExtendedPlayer, UserTeam } from "../types/types";
+import { ExtendedPlayer, UserTeam, TeamExtendedInfo, LeagueInfo } from "../types/types";
 import { User } from "../contexts/userContext";
 
 export const createNewTeam = async (
@@ -41,6 +41,29 @@ export const searchPlayers = async (
 ): Promise<ExtendedPlayer[]> => {
   try {
     const url = `${API_URL}/searchPlayers?q=${encodeURIComponent(query)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (res.status == 200) {
+      return data;
+    } else {
+      return [];
+    }
+  } catch (e) {
+    return [];
+  }
+};
+
+export const getWithFilters = async (
+  team: string,
+  league: string,
+  position: number,
+  playerName: string,
+  rating: boolean,
+  speed: boolean,
+): Promise<any[]> => {
+  try {
+    const url = `${API_URL}/getWithFilters?team=${encodeURIComponent(team)}&league=${encodeURIComponent(league)}&position=${encodeURIComponent(position)}&playerName=${encodeURIComponent(playerName)}&rating=${encodeURIComponent(rating)}&speed=${encodeURIComponent(speed)}`;
     const res = await fetch(url);
     const data = await res.json();
 
