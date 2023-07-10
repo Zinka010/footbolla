@@ -135,7 +135,6 @@ const TeamList: React.FC = () => {
             <Table variant="simple">
               <Thead>
                 <Tr>
-                  <Th>Team ID</Th>
                   <Th>Team Short Name</Th>
                   <Th>Team Long Name</Th>
                   {/* Empty Th tags to ensure the horiztonal line also covers the link rows */}
@@ -147,7 +146,6 @@ const TeamList: React.FC = () => {
                 {(switcher ? teamResults : teams).map((team) => {
                   return (
                     <Tr key={team.team_id}>
-                      <Td>{team.team_id}</Td>
                       <Td>{team.team_short_name}</Td>
                       <Td>{team.team_long_name}</Td>
 
@@ -164,7 +162,7 @@ const TeamList: React.FC = () => {
                           style={{ textDecorationLine: "underline" }}
                           href={`/roster/${team.team_id}`}
                         >
-                          Roster
+                          Squad
                         </Link>
                       </Td>
                     </Tr>
