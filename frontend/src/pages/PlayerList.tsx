@@ -13,7 +13,7 @@ import {
   Link,
   ButtonGroup,
   Button,
-  Input,
+  Select,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import usePlayers from "../hooks/usePlayers";
@@ -21,9 +21,27 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { SearchBar } from "../components/SearchBar";
 import { debounce } from "lodash";
 import { useFilterSearch } from "../hooks/useFilterSearch";
-import { PlayerPositions } from "../util/CONSTANTS"
+import { PlayerPositions, positionMap } from "../util/CONSTANTS"
 
 let switcher = false;
+
+interface IFilters {
+  team: string,
+  league: string,
+  position: PlayerPositions | number,
+  playerName: string,
+  rating: boolean,
+  speed: boolean,
+};
+
+const filters: IFilters = {
+  team: "",
+  league: "",
+  position: -1,
+  playerName: "",
+  rating: false,
+  speed: false
+}
 
 const PlayerList: React.FC = () => {
   const {
@@ -43,33 +61,23 @@ const PlayerList: React.FC = () => {
     isAtEndFilter
   } = useFilterSearch();
 
-  interface IFilters {
-    team: string,
-    league: string,
-    position: PlayerPositions | number,
-    playerName: string,
-    rating: boolean,
-    speed: boolean,
-  };
-
-  const filters: IFilters = {
-    team: "",
-    league: "",
-    position: -1,
-    playerName: "",
-    rating: false,
-    speed: false
-  }
-
-  const handleFilterSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === ""){
+  const handleFilterSearch = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value == ""){
       switcher = false;
+    } else if (Number.isInteger(Number(e.target.value))) {
+      switcher = true;
+      debouncedSearchSelect(Number(e.target.value));
     } else {
       switcher = true;
       debouncedSearch(e.target.value);
     }
     console.log(switcher + " " + e.target.value);
   }
+
+  const debouncedSearchSelect = debounce((target: number) => {
+    filters.position = target;
+    playerFilterSearch(filters.team, filters.league, filters.position, filters.playerName, filters.rating, filters.speed);
+  });
 
   const debouncedSearch = debounce((target: string) => {
     filters.playerName = target;
@@ -105,13 +113,28 @@ const PlayerList: React.FC = () => {
           </Heading>
           <Box
             minWidth="50px"
-            width="300px"
+            width="500px"
             bg="white"
             rounded="2xl"
+            style={{ display: "flex" }}
             m={1}
             p={2}
           >
             <SearchBar typeOnChange={handleFilterSearch} />
+            <Select variant="outline" style={{ marginLeft: "5px"}} defaultValue={-1} onChange={handleFilterSearch}>
+                <option value={-1}>Select position...</option>
+                <option value={PlayerPositions.GOALKEEPER}>{positionMap[PlayerPositions.GOALKEEPER]}</option>
+                <option value={PlayerPositions.RIGHT_BACK}>{positionMap[PlayerPositions.RIGHT_BACK]}</option>
+                <option value={PlayerPositions.RIGHT_CENTER_BACK}>{positionMap[PlayerPositions.RIGHT_CENTER_BACK]}</option>
+                <option value={PlayerPositions.LEFT_CENTER_BACK}>{positionMap[PlayerPositions.LEFT_CENTER_BACK]}</option>
+                <option value={PlayerPositions.LEFT_BACK}>{positionMap[PlayerPositions.LEFT_BACK]}</option>
+                <option value={PlayerPositions.RIGHT_MIDFIELDER}>{positionMap[PlayerPositions.RIGHT_MIDFIELDER]}</option>
+                <option value={PlayerPositions.CENTER_MIDFIELDER}>{positionMap[PlayerPositions.CENTER_MIDFIELDER]}</option>
+                <option value={PlayerPositions.LEFT_MIDFIELDER}>{positionMap[PlayerPositions.LEFT_MIDFIELDER]}</option>
+                <option value={PlayerPositions.RIGHT_FORWARD}>{positionMap[PlayerPositions.RIGHT_FORWARD]}</option>
+                <option value={PlayerPositions.CENTER_FORWARD}>{positionMap[PlayerPositions.CENTER_FORWARD]}</option>
+                <option value={PlayerPositions.LEFT_FORWARD}>{positionMap[PlayerPositions.LEFT_FORWARD]}</option>
+            </Select>
           </Box>
           <TableContainer width="100%">
             <Table variant="simple">
