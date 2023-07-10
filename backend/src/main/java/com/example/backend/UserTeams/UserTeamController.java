@@ -177,10 +177,18 @@ public class UserTeamController {
 
             JSONArray getTeam1Score = getUserTeamScore(team1_id);
             JSONArray getTeam2Score = getUserTeamScore(team2_id);
-            BigDecimal team1Score = (BigDecimal) getTeam1Score.getJSONObject(0).get("team_score");
-            BigDecimal team2Score = (BigDecimal) getTeam2Score.getJSONObject(0).get("team_score");
-            System.out.println(team1Score);
-            System.out.println(team2Score);
+            BigDecimal team1Score;
+            BigDecimal team2Score;
+            try {
+                team1Score = (BigDecimal) getTeam1Score.getJSONObject(0).get("team_score");
+            } catch (Exception e) {
+                team1Score = BigDecimal.valueOf(0);
+            }
+            try {
+                team2Score = (BigDecimal) getTeam2Score.getJSONObject(0).get("team_score");
+            } catch (Exception e) {
+                team2Score = BigDecimal.valueOf(0);
+            }
 
             JSONArray res = new JSONArray();
             if (team1Score.compareTo(team2Score) == 1) {
