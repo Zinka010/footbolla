@@ -63,8 +63,8 @@ const LeagueList: React.FC = () => {
     if (e.target.value == "") {
       userSwitcher(false);
     } else {
-      userSwitcher(true);
       debouncedUpdateFilter();
+      userSwitcher(true);
     }
   };
 
@@ -106,7 +106,7 @@ const LeagueList: React.FC = () => {
   return (
     <>
       <Navbar />
-      <Center minHeight="100%" minWidth="100%" bg="gray.200">
+      <Center minHeight="100vh" minWidth="100%" bg="gray.200">
         <Box
           minWidth="300px"
           width="2000px"

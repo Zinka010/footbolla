@@ -139,7 +139,7 @@ const PlayerList: React.FC = () => {
   return (
     <>
       <Navbar />
-      <Center minHeight="100%" minWidth="100%" bg="gray.200">
+      <Center minHeight="100vh" minWidth="100%" bg="gray.200">
         <Box
           minWidth="300px"
           width="2000px"
@@ -163,20 +163,6 @@ const PlayerList: React.FC = () => {
             p={2}
           >
             <SearchBar typeOnChange={handleFilterSearch} />
-            {/* <Select variant="outline" style={{ marginLeft: "5px", marginRight: "15px"}} defaultValue={-1} onChange={handleFilterPosition}>
-                <option value={-1}>Select position...</option>
-                <option value={PlayerPositions.GOALKEEPER}>{positionMap[PlayerPositions.GOALKEEPER]}</option>
-                <option value={PlayerPositions.RIGHT_BACK}>{positionMap[PlayerPositions.RIGHT_BACK]}</option>
-                <option value={PlayerPositions.RIGHT_CENTER_BACK}>{positionMap[PlayerPositions.RIGHT_CENTER_BACK]}</option>
-                <option value={PlayerPositions.LEFT_CENTER_BACK}>{positionMap[PlayerPositions.LEFT_CENTER_BACK]}</option>
-                <option value={PlayerPositions.LEFT_BACK}>{positionMap[PlayerPositions.LEFT_BACK]}</option>
-                <option value={PlayerPositions.RIGHT_MIDFIELDER}>{positionMap[PlayerPositions.RIGHT_MIDFIELDER]}</option>
-                <option value={PlayerPositions.CENTER_MIDFIELDER}>{positionMap[PlayerPositions.CENTER_MIDFIELDER]}</option>
-                <option value={PlayerPositions.LEFT_MIDFIELDER}>{positionMap[PlayerPositions.LEFT_MIDFIELDER]}</option>
-                <option value={PlayerPositions.RIGHT_FORWARD}>{positionMap[PlayerPositions.RIGHT_FORWARD]}</option>
-                <option value={PlayerPositions.CENTER_FORWARD}>{positionMap[PlayerPositions.CENTER_FORWARD]}</option>
-                <option value={PlayerPositions.LEFT_FORWARD}>{positionMap[PlayerPositions.LEFT_FORWARD]}</option>
-            </Select> */}
             <Checkbox
               onChange={handleFilterRating}
               style={{ width: "450px", marginLeft: "15px" }}

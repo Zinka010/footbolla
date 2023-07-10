@@ -107,7 +107,7 @@ const TeamList: React.FC = () => {
   return (
     <>
       <Navbar />
-      <Center minHeight="100%" minWidth="100%" bg="gray.200">
+      <Center minHeight="100vh" minWidth="100%" bg="gray.200">
         <Box
           minWidth="300px"
           width="2000px"
