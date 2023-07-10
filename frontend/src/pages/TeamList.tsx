@@ -16,7 +16,29 @@ import {
   import Navbar from "../components/Navbar";
   import useTeams from "../hooks/useTeams";
   import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-  
+  import { SearchBar } from "../components/SearchBar";
+  import { debounce } from "lodash";
+  import { useFilterSearch } from "../hooks/useFilterSearch";
+  import { useState } from "react"
+
+  interface IFilters {
+    team: string,
+    league: string,
+    playerName: string,
+    rating: boolean,
+    speed: boolean,
+    age: boolean,
+  };
+
+  const filters: IFilters = {
+    team: "",
+    league: "",
+    playerName: "",
+    rating: false,
+    speed: false,
+    age: false,
+  }
+
   const TeamList: React.FC = () => {
     const {
       teams,
@@ -25,6 +47,41 @@ import {
       isAtStart,
       isAtEnd,
     } = useTeams();
+
+    const { 
+      teamResults: teamResults, 
+      filterSearch: playerFilterSearch,
+      fetchNextPageOfPlayersFilter,
+      fetchPreviousPageOfPlayersFilter,
+      isAtStartFilter,
+      isAtEndFilter
+    } = useFilterSearch();
+
+    const [switcher, userSwitcher] = useState(false);
+
+    const handleFilterSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+      filters.team = e.target.value;
+      if (e.target.value == ""){
+        userSwitcher(false);
+      } else {
+        userSwitcher(true);
+        debouncedUpdateFilter();
+      }
+    }
+
+    const debouncedUpdateFilter = debounce(() => {
+      playerFilterSearch(filters.team, filters.league, filters.playerName, filters.rating, filters.speed, filters.age);
+    });
+
+    const handleClickNext = () => {
+      fetchNextPageOfPlayersFilter();
+      playerFilterSearch(filters.team, filters.league, filters.playerName, filters.rating, filters.speed, filters.age);
+    }
+
+    const handleClickPrev = () => {
+      fetchPreviousPageOfPlayersFilter();
+      playerFilterSearch(filters.team, filters.league, filters.playerName, filters.rating, filters.speed, filters.age);
+    }
   
     return (
       <>
@@ -42,6 +99,17 @@ import {
             <Heading size="3xl" mb={10}>
               Teams
             </Heading>
+            <Box
+              minWidth="50px"
+              width="400px"
+              bg="white"
+              rounded="2xl"
+              style={{ display: "flex" }}
+              m={1}
+              p={2}
+            >
+              <SearchBar typeOnChange={handleFilterSearch} />
+            </Box>
             <TableContainer width="100%">
               <Table variant="simple">
                 <Thead>
@@ -55,7 +123,7 @@ import {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {teams.map((team) => {
+                  {(switcher ? teamResults : teams).map((team) => {
                     return (
                       <Tr key={team.team_id}>
                         <Td>{team.team_id}</Td>
@@ -86,16 +154,16 @@ import {
             <Center mt={10}>
               <ButtonGroup isAttached variant={"outline"}>
                 <Button
-                  isDisabled={isAtStart}
+                  isDisabled={switcher ? isAtStartFilter : isAtStart}
                   leftIcon={<ChevronLeftIcon />}
-                  onClick={fetchPreviousPageOfPlayers}
+                  onClick={switcher ? handleClickPrev : fetchPreviousPageOfPlayers}
                 >
                   Prev
                 </Button>
                 <Button
-                  isDisabled={isAtEnd}
+                  isDisabled={switcher ? isAtEndFilter : isAtEnd}
                   rightIcon={<ChevronRightIcon />}
-                  onClick={fetchNextPageOfPlayers}
+                  onClick={switcher ? handleClickNext : fetchNextPageOfPlayers}
                 >
                   Next
                 </Button>

@@ -25,15 +25,15 @@ export const useFilterSearch = () => {
     setBounds({ start: Math.max(0, bounds.start - 50), end: bounds.end - 50 });
   };
 
-  const filterSearch = async (team: string, league: string, position: number, playerName: string, rating: boolean, speed: boolean) => {
+  const filterSearch = async (team: string, league: string, playerName: string, rating: boolean, speed: boolean, age: boolean) => {
     if (team.trim() != "") {
-      const teamData: TeamExtendedInfo[] = await getWithFilters(team, league, position, playerName, rating, speed, bounds.start, bounds.end);
+      const teamData: TeamExtendedInfo[] = await getWithFilters(team, league, playerName, rating, speed, age, bounds.start, bounds.end);
       setTeamResults(teamData);
     } else if (league.trim() != "") {
-      const leagueData: LeagueInfo[] = await getWithFilters(team, league, position, playerName, rating, speed, bounds.start, bounds.end);
+      const leagueData: LeagueInfo[] = await getWithFilters(team, league, playerName, rating, speed, age, bounds.start, bounds.end);
       setLeagueResults(leagueData);
-    } else if (playerName.trim() != "" || position != null || rating != false || speed != false ) {
-      const playerData: Player[] = await getWithFilters(team, league, position, playerName, rating, speed, bounds.start, bounds.end);
+    } else if (playerName.trim() != "" || age != false || rating != false || speed != false ) {
+      const playerData: Player[] = await getWithFilters(team, league, playerName, rating, speed, age, bounds.start, bounds.end);
       setPlayerResults(playerData);
     }
 
@@ -48,9 +48,6 @@ export const useFilterSearch = () => {
     teamResults,
     leagueResults,
     filterSearch,
-    setPlayerResults,
-    setTeamResults,
-    setLeagueResults,
     fetchNextPageOfPlayersFilter: nextPage,
     fetchPreviousPageOfPlayersFilter: previousPage,
     isAtStartFilter: bounds.start == 0,

@@ -14,7 +14,6 @@ import {
   Link,
   ButtonGroup,
   Button,
-  Select,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import usePlayers from "../hooks/usePlayers";
@@ -23,25 +22,24 @@ import { SearchBar } from "../components/SearchBar";
 import { debounce } from "lodash";
 import { useFilterSearch } from "../hooks/useFilterSearch";
 import { PlayerPositions, positionMap } from "../util/CONSTANTS"
-
-let switcher = false;
+import { useState } from "react"
 
 interface IFilters {
   team: string,
   league: string,
-  position: PlayerPositions | number,
   playerName: string,
   rating: boolean,
   speed: boolean,
+  age: boolean,
 };
 
 const filters: IFilters = {
   team: "",
   league: "",
-  position: -1,
   playerName: "",
   rating: false,
-  speed: false
+  speed: false,
+  age: false,
 }
 
 const PlayerList: React.FC = () => {
@@ -62,46 +60,60 @@ const PlayerList: React.FC = () => {
     isAtEndFilter
   } = useFilterSearch();
 
+  const [switcher, userSwitcher] = useState(0);
+
   const handleFilterSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value == ""){
-      switcher = false;
+      filters.playerName = e.target.value;
+      userSwitcher(switcher - 1);
     } else {
-      switcher = true;
+      if (filters.playerName.length === 0){
+        userSwitcher(switcher + 1);
+      }
       filters.playerName = e.target.value;
       debouncedUpdateFilter();
     }
   }
 
   const handleFilterRating = (e: React.ChangeEvent<HTMLInputElement>) => {
-    switcher = true;
     filters.rating = e.target.checked;
-    debouncedUpdateFilter();
+    handleCheckbox(e.target.checked);
   }
 
   const handleFilterSpeed = (e: React.ChangeEvent<HTMLInputElement>) => {
-    switcher = true;
     filters.speed = e.target.checked;
-    debouncedUpdateFilter();
+    handleCheckbox(e.target.checked);
   }
 
-  const handleFilterPosition = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    switcher = true;
-    filters.position = Number(e.target.value);
-    debouncedUpdateFilter();
+  const handleFilterAge = (e: React.ChangeEvent<HTMLInputElement>) => {
+    filters.age = e.target.checked;
+    handleCheckbox(e.target.checked);
+  }
+
+  const handleCheckbox = (target: boolean) => {
+    if (target){
+      userSwitcher(switcher + 1);
+      debouncedUpdateFilter();
+    } else {
+      userSwitcher(switcher - 1);
+      if (switcher > 0){
+        debouncedUpdateFilter();
+      }
+    }
   }
 
   const debouncedUpdateFilter = debounce(() => {
-    playerFilterSearch(filters.team, filters.league, filters.position, filters.playerName, filters.rating, filters.speed);
+    playerFilterSearch(filters.team, filters.league, filters.playerName, filters.rating, filters.speed, filters.age);
   });
 
   const handleClickNext = () => {
     fetchNextPageOfPlayersFilter();
-    playerFilterSearch(filters.team, filters.league, filters.position, filters.playerName, filters.rating, filters.speed);
+    playerFilterSearch(filters.team, filters.league, filters.playerName, filters.rating, filters.speed, filters.age);
   }
 
   const handleClickPrev = () => {
     fetchPreviousPageOfPlayersFilter();
-    playerFilterSearch(filters.team, filters.league, filters.position, filters.playerName, filters.rating, filters.speed);
+    playerFilterSearch(filters.team, filters.league, filters.playerName, filters.rating, filters.speed, filters.age);
   }
 
   return (
@@ -131,7 +143,7 @@ const PlayerList: React.FC = () => {
             p={2}
           >
             <SearchBar typeOnChange={handleFilterSearch} />
-            <Select variant="outline" style={{ marginLeft: "5px", marginRight: "15px"}} defaultValue={-1} onChange={handleFilterPosition}>
+            {/* <Select variant="outline" style={{ marginLeft: "5px", marginRight: "15px"}} defaultValue={-1} onChange={handleFilterPosition}>
                 <option value={-1}>Select position...</option>
                 <option value={PlayerPositions.GOALKEEPER}>{positionMap[PlayerPositions.GOALKEEPER]}</option>
                 <option value={PlayerPositions.RIGHT_BACK}>{positionMap[PlayerPositions.RIGHT_BACK]}</option>
@@ -144,9 +156,10 @@ const PlayerList: React.FC = () => {
                 <option value={PlayerPositions.RIGHT_FORWARD}>{positionMap[PlayerPositions.RIGHT_FORWARD]}</option>
                 <option value={PlayerPositions.CENTER_FORWARD}>{positionMap[PlayerPositions.CENTER_FORWARD]}</option>
                 <option value={PlayerPositions.LEFT_FORWARD}>{positionMap[PlayerPositions.LEFT_FORWARD]}</option>
-            </Select>
+            </Select> */}
             <Checkbox onChange={handleFilterRating} style={{ width: "450px", marginLeft: "15px"}}>Order by Ranking</Checkbox>
             <Checkbox onChange={handleFilterSpeed} style={{ width: "450px", marginRight: "15px"}}>Order by Speed</Checkbox>
+            <Checkbox onChange={handleFilterAge} style={{ width: "450px", marginRight: "15px"}}>Order by Age</Checkbox>
           </Box>
           <TableContainer width="100%">
             <Table variant="simple">
@@ -160,7 +173,7 @@ const PlayerList: React.FC = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {(switcher ? playerResults : players).map((player) => {
+                {(switcher > 0 ? playerResults : players).map((player) => {
                   return (
                     <Tr key={player.player_id}>
                       <Td>{player.player_id}</Td>
@@ -182,16 +195,16 @@ const PlayerList: React.FC = () => {
           <Center mt={10}>
             <ButtonGroup isAttached variant={"outline"}>
               <Button
-                isDisabled={switcher ? isAtStartFilter : isAtStart}
+                isDisabled={switcher > 0 ? isAtStartFilter : isAtStart}
                 leftIcon={<ChevronLeftIcon />}
-                onClick={switcher ? handleClickPrev : fetchPreviousPageOfPlayers}
+                onClick={switcher > 0 ? handleClickPrev : fetchPreviousPageOfPlayers}
               >
                 Prev
               </Button>
               <Button
-                isDisabled={switcher ? isAtEndFilter : isAtEnd}
+                isDisabled={switcher > 0 ? isAtEndFilter : isAtEnd}
                 rightIcon={<ChevronRightIcon />}
-                onClick={switcher ? handleClickNext : fetchNextPageOfPlayers}
+                onClick={switcher > 0 ? handleClickNext : fetchNextPageOfPlayers}
               >
                 Next
               </Button>

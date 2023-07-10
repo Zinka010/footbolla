@@ -92,7 +92,7 @@ public class PlayerController {
     @GetMapping("/getWithFilters")
     public ResponseEntity<String> getWithFilter(@RequestParam(name = "team", defaultValue = "") String team, @RequestParam(name = "league", defaultValue = "") String league,
                                                 @RequestParam(name = "position", defaultValue = "-1") Integer position, @RequestParam(name = "playerName", defaultValue = "") String playerName,
-                                                @RequestParam(name = "rating", defaultValue = "false") boolean rating, @RequestParam(name = "speed", defaultValue = "false") boolean speed,
+                                                @RequestParam(name = "rating", defaultValue = "false") boolean rating, @RequestParam(name = "speed", defaultValue = "false") boolean speed, @RequestParam(name = "age", defaultValue = "false") boolean age,
                                                 @RequestParam(name = "startId", defaultValue = "0") Integer startId, @RequestParam(name = "endId", defaultValue = "50") Integer endId) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
             Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
@@ -103,7 +103,7 @@ public class PlayerController {
             } else if (!Objects.equals(league, "")){
                 readMessageQuery = readMessageQuery + "FROM Leagues WHERE Leagues.league_name LIKE '%" + league + "%'";
             } else if (!Objects.equals(position, -1) || !Objects.equals(playerName, "")){
-                readMessageQuery = readMessageQuery + "FROM Players WHERE player_id >= " + startId + " AND player_id <= " + endId + " AND ";
+                readMessageQuery = readMessageQuery + "FROM Players WHERE ";
                 if (!Objects.equals(playerName, "")){
                     readMessageQuery = readMessageQuery + "Players.name LIKE '%" + playerName + "%'";
                 }
@@ -115,22 +115,32 @@ public class PlayerController {
                 }
             }
 
-            if (rating || speed){
+            int filter = 0;
+            if (rating || speed || age){
                 if (Objects.equals(position, -1) && Objects.equals(playerName, "")){
-                    readMessageQuery = readMessageQuery + "FROM PLAYERS WHERE player_id >= " + startId + " AND player_id <= " + endId;
+                    readMessageQuery = readMessageQuery + "FROM PLAYERS";
                 }
                 readMessageQuery += " ORDER BY";
                 if (rating){
-                    readMessageQuery = readMessageQuery + " PLAYERS.overall_rating";
+                    filter++;
+                    readMessageQuery = readMessageQuery + " PLAYERS.overall_rating DESC";
                 }
-                if (rating && speed){
-                    readMessageQuery = readMessageQuery + ",";
+                if (filter > 0 && speed){
+                    readMessageQuery = readMessageQuery + " ,";
                 }
                 if (speed){
-                    readMessageQuery = readMessageQuery + " PLAYERS.sprint_speed";
+                    filter++;
+                    readMessageQuery = readMessageQuery + " PLAYERS.sprint_speed DESC";
+                }
+                if (filter > 0 && age){
+                    readMessageQuery = readMessageQuery + " ,";
+                }
+                if (age){
+                    readMessageQuery = readMessageQuery + " PLAYERS.birthday DESC";
                 }
             }
-            System.out.println(readMessageQuery);
+            readMessageQuery = readMessageQuery + " LIMIT 50";
+
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
             JSONArray res = Util.resultToJsonArray(resultSet, connection);
