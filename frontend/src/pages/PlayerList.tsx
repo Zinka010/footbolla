@@ -21,7 +21,6 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { SearchBar } from "../components/SearchBar";
 import { debounce } from "lodash";
 import { useFilterSearch } from "../hooks/useFilterSearch";
-import { PlayerPositions, positionMap } from "../util/CONSTANTS"
 import { useState } from "react"
 
 interface IFilters {

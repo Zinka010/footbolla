@@ -1,5 +1,5 @@
 import { API_URL, PlayerPositions } from "./CONSTANTS";
-import { ExtendedPlayer, UserTeam, TeamExtendedInfo, LeagueInfo } from "../types/types";
+import { ExtendedPlayer, UserTeam } from "../types/types";
 import { User } from "../contexts/userContext";
 
 export const createNewTeam = async (
