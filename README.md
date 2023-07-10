@@ -44,6 +44,29 @@ To run our data-driven application, follow these steps.
 4. Go into the frontend folder in a new terminal tab: `cd ../frontend` and type `npm install`
 5. Run this command: `npm run dev` and it should tell you the link that the application is being served on. Go to that application, and then you can use the app! The login and signup pages are currently not implemented, so you can just click "Log In" and it should take you to the player list.
 
+### Currently Supported Features
+- Create an account/login
+- Search/order players
+  - View player
+- Search teams/leagues
+  - View team/league 
+- Create user teams and add players to these teams
+- Simulate a match between two of your user teams and get a result
+  
+## C2 - SQL Code
+All SQL code for this project can be found in `migration / relation-schema`
+
+## C3 - SQL Queries for Features (sample data)
+All SQL queries can be found in `sample-sql`
+
+## C4 - SQL Queries for Features (production data)
+- Need to populate C4
+
+## C5 - Application Code
+All application code for this project lives in the `frontend/` and `backend/` directories.
+
+
+
 # Contributors
 - Aryaman Dhingra
 - Rishad Luthra
