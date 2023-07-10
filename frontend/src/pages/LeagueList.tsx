@@ -11,7 +11,6 @@ import {
   Tr,
   ButtonGroup,
   Button,
-  Link,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import useLeagues from "../hooks/useLeagues";
