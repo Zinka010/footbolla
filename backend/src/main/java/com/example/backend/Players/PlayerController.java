@@ -103,7 +103,7 @@ public class PlayerController {
             } else if (!Objects.equals(league, "")){
                 readMessageQuery = readMessageQuery + "FROM Leagues WHERE Leagues.league_name LIKE '%" + league + "%'";
             } else if (!Objects.equals(position, -1) || !Objects.equals(playerName, "")){
-                readMessageQuery = "SELECT player_id, name, birthday, height, weight FROM Players WHERE player_id >= " + startId + " AND player_id <= " + endId + " AND ";
+                readMessageQuery = readMessageQuery + "FROM Players WHERE player_id >= " + startId + " AND player_id <= " + endId + " AND ";
                 if (!Objects.equals(playerName, "")){
                     readMessageQuery = readMessageQuery + "Players.name LIKE '%" + playerName + "%'";
                 }
@@ -116,17 +116,21 @@ public class PlayerController {
             }
 
             if (rating || speed){
+                if (Objects.equals(position, -1) && Objects.equals(playerName, "")){
+                    readMessageQuery = readMessageQuery + "FROM PLAYERS WHERE player_id >= " + startId + " AND player_id <= " + endId;
+                }
                 readMessageQuery += " ORDER BY";
                 if (rating){
-                    readMessageQuery = readMessageQuery + " rating";
+                    readMessageQuery = readMessageQuery + " PLAYERS.overall_rating";
                 }
                 if (rating && speed){
                     readMessageQuery = readMessageQuery + ",";
                 }
                 if (speed){
-                    readMessageQuery = readMessageQuery + " speed";
+                    readMessageQuery = readMessageQuery + " PLAYERS.sprint_speed";
                 }
             }
+            System.out.println(readMessageQuery);
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(readMessageQuery);
             JSONArray res = Util.resultToJsonArray(resultSet, connection);

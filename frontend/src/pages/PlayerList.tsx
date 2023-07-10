@@ -1,6 +1,7 @@
 import {
   Box,
   Center,
+  Checkbox,
   HStack,
   Heading,
   Table,
@@ -61,26 +62,35 @@ const PlayerList: React.FC = () => {
     isAtEndFilter
   } = useFilterSearch();
 
-  const handleFilterSearch = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleFilterSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value == ""){
       switcher = false;
-    } else if (Number.isInteger(Number(e.target.value))) {
-      switcher = true;
-      debouncedSearchSelect(Number(e.target.value));
     } else {
       switcher = true;
-      debouncedSearch(e.target.value);
+      filters.playerName = e.target.value;
+      debouncedUpdateFilter();
     }
-    console.log(switcher + " " + e.target.value);
   }
 
-  const debouncedSearchSelect = debounce((target: number) => {
-    filters.position = target;
-    playerFilterSearch(filters.team, filters.league, filters.position, filters.playerName, filters.rating, filters.speed);
-  });
+  const handleFilterRating = (e: React.ChangeEvent<HTMLInputElement>) => {
+    switcher = true;
+    filters.rating = e.target.checked;
+    debouncedUpdateFilter();
+  }
 
-  const debouncedSearch = debounce((target: string) => {
-    filters.playerName = target;
+  const handleFilterSpeed = (e: React.ChangeEvent<HTMLInputElement>) => {
+    switcher = true;
+    filters.speed = e.target.checked;
+    debouncedUpdateFilter();
+  }
+
+  const handleFilterPosition = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    switcher = true;
+    filters.position = Number(e.target.value);
+    debouncedUpdateFilter();
+  }
+
+  const debouncedUpdateFilter = debounce(() => {
     playerFilterSearch(filters.team, filters.league, filters.position, filters.playerName, filters.rating, filters.speed);
   });
 
@@ -113,7 +123,7 @@ const PlayerList: React.FC = () => {
           </Heading>
           <Box
             minWidth="50px"
-            width="500px"
+            width="1200px"
             bg="white"
             rounded="2xl"
             style={{ display: "flex" }}
@@ -121,7 +131,7 @@ const PlayerList: React.FC = () => {
             p={2}
           >
             <SearchBar typeOnChange={handleFilterSearch} />
-            <Select variant="outline" style={{ marginLeft: "5px"}} defaultValue={-1} onChange={handleFilterSearch}>
+            <Select variant="outline" style={{ marginLeft: "5px", marginRight: "15px"}} defaultValue={-1} onChange={handleFilterPosition}>
                 <option value={-1}>Select position...</option>
                 <option value={PlayerPositions.GOALKEEPER}>{positionMap[PlayerPositions.GOALKEEPER]}</option>
                 <option value={PlayerPositions.RIGHT_BACK}>{positionMap[PlayerPositions.RIGHT_BACK]}</option>
@@ -135,6 +145,8 @@ const PlayerList: React.FC = () => {
                 <option value={PlayerPositions.CENTER_FORWARD}>{positionMap[PlayerPositions.CENTER_FORWARD]}</option>
                 <option value={PlayerPositions.LEFT_FORWARD}>{positionMap[PlayerPositions.LEFT_FORWARD]}</option>
             </Select>
+            <Checkbox onChange={handleFilterRating} style={{ width: "450px", marginLeft: "15px"}}>Order by Ranking</Checkbox>
+            <Checkbox onChange={handleFilterSpeed} style={{ width: "450px", marginRight: "15px"}}>Order by Speed</Checkbox>
           </Box>
           <TableContainer width="100%">
             <Table variant="simple">
