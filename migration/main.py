@@ -6,6 +6,7 @@ import sys
 
 
 sqlite_db = "migration/database.db"
+
 mysql_host = sys.argv[3] if (len(sys.argv) > 3) else "localhost"
 mysql_user = sys.argv[1] if (len(sys.argv) > 1) else "root"
 mysql_password = sys.argv[2] if (len(sys.argv) > 2) else "password"
@@ -46,6 +47,9 @@ def main():
     drop_tables(mysql_cursor)
     create_tables(mysql_cursor)
     populate_tables(mysql_cursor, sqlite_cursor, mysql_conn)
+
+    # comment next line for no performance tuning
+    create_indexes(mysql_cursor, mysql_conn)
 
 
 def sqlFileContent(path):
@@ -126,6 +130,12 @@ def populate_tables(mysql, sqlite, conn):
     populate_is_owner_of(mysql, conn)
     populate_is_in_user_team(mysql, conn)
     populate_player_history(mysql, sqlite, conn)
+
+
+def create_indexes(mysql, conn):
+    # comment out next line (137) to not create user team index
+    create_user_team_index(mysql, conn)
+    return
 
 
 def create_db(mysql_cursor):
@@ -386,6 +396,13 @@ def populate_player_history(mysql_cursor, sqlite_cursor, mysql_conn):
             # do nothing
             e
     mysql_conn.commit()
+
+
+def create_user_team_index(mysql, conn):
+    index_sql = sqlFileContent("indexes/USER_TEAMS.sql")
+
+    mysql.execute(index_sql, multi=True)
+    conn.commit()
 
 
 if __name__ == "__main__":
