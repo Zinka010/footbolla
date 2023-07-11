@@ -54,6 +54,31 @@ export const searchPlayers = async (
   }
 };
 
+export const getWithFilters = async (
+  team: string,
+  league: string,
+  playerName: string,
+  rating: boolean,
+  speed: boolean,
+  age: boolean,
+  start: number,
+  end: number
+): Promise<any[]> => {
+  try {
+    const url = `${API_URL}/getWithFilters?team=${encodeURIComponent(team)}&league=${encodeURIComponent(league)}&playerName=${encodeURIComponent(playerName)}&rating=${encodeURIComponent(rating)}&speed=${encodeURIComponent(speed)}&age=${encodeURIComponent(age)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (res.status == 200) {
+      return data;
+    } else {
+      return [];
+    }
+  } catch (e) {
+    return [];
+  }
+};
+
 export const addToUserTeam = async (
   teamId: number,
   players: { playerId: number; position: PlayerPositions }[]

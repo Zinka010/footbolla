@@ -22,21 +22,21 @@ const useTeams = () => {
   };
 
   useEffect(() => {
-    const getPlayers = async () => {
-      const players = await fetch(
+    const getTeams = async () => {
+      const teams = await fetch(
         `${API_URL}/team?startIdx=${bounds.start}&endIdx=${bounds.end}`
       );
 
-      const res = await players.json();
+      const res = await teams.json();
       setTeams((res as Team[]) || []);
 
-      const numPlayers = await fetch(`${API_URL}/teamCount`);
-      const num = await numPlayers.json();
+      const numTeams = await fetch(`${API_URL}/teamCount`);
+      const num = await numTeams.json();
 
       setNumTeams(Number(num[0].teamCount));
     };
 
-    getPlayers();
+    getTeams();
   }, [bounds]);
 
   return {

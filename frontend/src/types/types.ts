@@ -94,5 +94,7 @@ export type TeamExtendedInfo = {
   defenceDefenderLineClass: string;
 }
 
-
-
+export type LeagueInfo = {
+  league_id: number; 
+  league_name: string;
+}

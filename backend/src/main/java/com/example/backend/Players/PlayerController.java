@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.*;
+import java.util.Objects;
 
 @RestController
 public class PlayerController {
@@ -82,6 +83,69 @@ public class PlayerController {
     public ResponseEntity<String> getPlayerByIDEndpoint(@PathVariable Integer ID) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         try {
             return ResponseEntity.ok(getPlayersByIdRange(ID, ID, true).toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
+        }
+    }
+
+    @GetMapping("/getWithFilters")
+    public ResponseEntity<String> getWithFilter(@RequestParam(name = "team", defaultValue = "") String team, @RequestParam(name = "league", defaultValue = "") String league,
+                                                @RequestParam(name = "position", defaultValue = "-1") Integer position, @RequestParam(name = "playerName", defaultValue = "") String playerName,
+                                                @RequestParam(name = "rating", defaultValue = "false") boolean rating, @RequestParam(name = "speed", defaultValue = "false") boolean speed, @RequestParam(name = "age", defaultValue = "false") boolean age,
+                                                @RequestParam(name = "startId", defaultValue = "0") Integer startId, @RequestParam(name = "endId", defaultValue = "50") Integer endId) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        try {
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
+            String readMessageQuery = "SELECT * ";
+
+            if (!Objects.equals(team, "")){
+                readMessageQuery = readMessageQuery + "FROM Teams WHERE Teams.team_long_name LIKE '%" + team + "%'";
+            } else if (!Objects.equals(league, "")){
+                readMessageQuery = readMessageQuery + "FROM Leagues WHERE Leagues.league_name LIKE '%" + league + "%'";
+            } else if (!Objects.equals(position, -1) || !Objects.equals(playerName, "")){
+                readMessageQuery = readMessageQuery + "FROM Players WHERE ";
+                if (!Objects.equals(playerName, "")){
+                    readMessageQuery = readMessageQuery + "Players.name LIKE '%" + playerName + "%'";
+                }
+                if (!Objects.equals(position, -1) && !Objects.equals(playerName, "")){
+                    readMessageQuery = readMessageQuery + " AND ";
+                }
+                if (!Objects.equals(position, -1)){
+                    readMessageQuery = readMessageQuery + "Players.positioning = " + position;
+                }
+            }
+
+            int filter = 0;
+            if (rating || speed || age){
+                if (Objects.equals(position, -1) && Objects.equals(playerName, "")){
+                    readMessageQuery = readMessageQuery + "FROM PLAYERS";
+                }
+                readMessageQuery += " ORDER BY";
+                if (rating){
+                    filter++;
+                    readMessageQuery = readMessageQuery + " PLAYERS.overall_rating DESC";
+                }
+                if (filter > 0 && speed){
+                    readMessageQuery = readMessageQuery + " ,";
+                }
+                if (speed){
+                    filter++;
+                    readMessageQuery = readMessageQuery + " PLAYERS.sprint_speed DESC";
+                }
+                if (filter > 0 && age){
+                    readMessageQuery = readMessageQuery + " ,";
+                }
+                if (age){
+                    readMessageQuery = readMessageQuery + " PLAYERS.birthday DESC";
+                }
+            }
+            readMessageQuery = readMessageQuery + " LIMIT 50";
+
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(readMessageQuery);
+            JSONArray res = Util.resultToJsonArray(resultSet, connection);
+            statement.close();
+            return ResponseEntity.ok(res.toString());
         } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));

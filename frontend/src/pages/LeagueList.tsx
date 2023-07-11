@@ -11,10 +11,9 @@ import {
   Tr,
   ButtonGroup,
   Button,
-  Link,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
-import useTeams from "../hooks/useTeams";
+import useLeagues from "../hooks/useLeagues";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { SearchBar } from "../components/SearchBar";
 import { debounce } from "lodash";
@@ -39,17 +38,17 @@ const filters: IFilters = {
   age: false,
 };
 
-const TeamList: React.FC = () => {
+const LeagueList: React.FC = () => {
   const {
-    teams,
+    leagues,
     fetchNextPageOfPlayers,
     fetchPreviousPageOfPlayers,
     isAtStart,
     isAtEnd,
-  } = useTeams();
+  } = useLeagues();
 
   const {
-    teamResults: teamResults,
+    leagueResults: leagueResults,
     filterSearch: playerFilterSearch,
     fetchNextPageOfPlayersFilter,
     fetchPreviousPageOfPlayersFilter,
@@ -60,12 +59,12 @@ const TeamList: React.FC = () => {
   const [switcher, userSwitcher] = useState(false);
 
   const handleFilterSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    filters.team = e.target.value;
+    filters.league = e.target.value;
     if (e.target.value == "") {
       userSwitcher(false);
     } else {
-      userSwitcher(true);
       debouncedUpdateFilter();
+      userSwitcher(true);
     }
   };
 
@@ -118,7 +117,7 @@ const TeamList: React.FC = () => {
           textAlign={"left"}
         >
           <Heading size="3xl" mb={10}>
-            Teams
+            Leagues
           </Heading>
           <Box
             minWidth="50px"
@@ -135,24 +134,22 @@ const TeamList: React.FC = () => {
             <Table variant="simple">
               <Thead>
                 <Tr>
-                  <Th>Team Short Name</Th>
-                  <Th>Team Long Name</Th>
+                  <Th>League ID</Th>
+                  <Th>League Name</Th>
                   {/* Empty Th tags to ensure the horiztonal line also covers the link rows */}
-                  <Th></Th>
-                  <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {(switcher ? teamResults : teams).map((team) => {
+                {(switcher ? leagueResults : leagues).map((league) => {
                   return (
-                    <Tr key={team.team_id}>
-                      <Td>{team.team_short_name}</Td>
-                      <Td>{team.team_long_name}</Td>
+                    <Tr key={league.league_id}>
+                      <Td>{league.league_id}</Td>
+                      <Td>{league.league_name}</Td>
 
-                      <Td>
+                      {/* <Td>
                         <Link
                           style={{ textDecorationLine: "underline" }}
-                          href={`/team/${team.team_id}`}
+                          href={`/team/${league.league_id}`}
                         >
                           More Info
                         </Link>
@@ -162,9 +159,9 @@ const TeamList: React.FC = () => {
                           style={{ textDecorationLine: "underline" }}
                           href={`/roster/${team.team_id}`}
                         >
-                          Squad
+                          Roster
                         </Link>
-                      </Td>
+                      </Td> */}
                     </Tr>
                   );
                 })}
@@ -197,4 +194,4 @@ const TeamList: React.FC = () => {
   );
 };
 
-export default TeamList;
+export default LeagueList;
