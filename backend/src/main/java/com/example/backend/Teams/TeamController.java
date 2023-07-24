@@ -94,4 +94,63 @@ public class TeamController {
         }
     }
 
+    @GetMapping("/overall_match_history/{team1_id}/{team2_id}")
+    public ResponseEntity<String> getOverallMatchHistory(@PathVariable String team1_id, @PathVariable String team2_id)  {
+        try {
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
+            String readMessageQuery = "SELECT SUM(team1_win) AS numTeam1Win, SUM(team2_win) AS numTeam2Win, SUM(TIE) AS numTies " +
+                                        "FROM (" +
+                                        "SELECT home_team_score > away_team_score AS team1_win, " +
+                                                "home_team_score < away_team_score AS team2_win, " +
+                                                "home_team_score = away_team_score AS TIE " +
+                                        "FROM footyfiend.MatchesPlayed NATURAL JOIN footyfiend.Matches " +
+                                        "WHERE (home_team_id = " + team1_id + " AND away_team_id = " + team2_id + ") " +
+                                        "UNION ALL " +
+                                        "SELECT away_team_score > home_team_score AS team1_win, " +
+                                                "away_team_score < home_team_score AS team2_win, " +
+                                                "home_team_score = away_team_score AS TIE " +
+                                        "FROM footyfiend.MatchesPlayed NATURAL JOIN footyfiend.Matches " +
+                                        "WHERE (home_team_id = " + team2_id + " AND away_team_id = " +  team1_id + ")) AS T;";
+
+
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(readMessageQuery);
+            JSONArray res = Util.resultToJsonArray(resultSet, connection);
+
+            return ResponseEntity.ok(res.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
+        }
+    }
+
+    @GetMapping("/last_five_matches/{team1_id}/{team2_id}")
+    public ResponseEntity<String> getTeamRosterById(@PathVariable String team1_id, @PathVariable String team2_id) {
+        try {
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
+            String readMessageQuery = "SELECT * " +
+                            "FROM ( " +
+                                    "SELECT home_team_id as team1_id, away_team_id as team2_id, home_team_score AS team1_score, away_team_score AS team2_score, season " +
+                                    "FROM footyfiend.MatchesPlayed NATURAL JOIN footyfiend.Matches " +
+                                    "WHERE (home_team_id = " + team1_id +" AND away_team_id = " + team2_id + ") " +
+                                    "UNION ALL " +
+                                    "SELECT away_team_id as team1_id, home_team_id as team2_id, away_team_score AS team1_score, home_team_score AS team2_score, season " +
+                                    "FROM footyfiend.MatchesPlayed NATURAL JOIN footyfiend.Matches " +
+                                    "WHERE (home_team_id = " + team2_id +" AND away_team_id = " + team1_id + ") " +
+                            ") AS T " +
+                            "ORDER BY SEASON DESC " +
+                            "LIMIT 5;";
+
+
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(readMessageQuery);
+            JSONArray res = Util.resultToJsonArray(resultSet, connection);
+
+            return ResponseEntity.ok(res.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
+        }
+    }
+
 }
