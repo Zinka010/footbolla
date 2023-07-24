@@ -115,16 +115,16 @@ def create_tables(mysql_cursor):
 
 def populate_tables(mysql, sqlite, conn):
     populate_leagues(mysql, sqlite, conn)
-    populate_sample_users(mysql, conn)
-    populate_sample_admin(mysql, conn)
+    #populate_sample_users(mysql, conn)
+    #populate_sample_admin(mysql, conn)
     populate_sample_teams(mysql, sqlite, conn)
     populate_sample_players(mysql, sqlite, conn)
     populate_sample_matches(mysql, sqlite, conn)
     populate_sample_matches_played(mysql, sqlite, conn)
     populate_is_in_league(mysql, sqlite, conn)
-    populate_user_teams(mysql, conn)
-    populate_is_owner_of(mysql, conn)
-    populate_is_in_user_team(mysql, conn)
+    #populate_user_teams(mysql, conn)
+    #populate_is_owner_of(mysql, conn)
+    #populate_is_in_user_team(mysql, conn)
     populate_player_history(mysql, sqlite, conn)
 
 
