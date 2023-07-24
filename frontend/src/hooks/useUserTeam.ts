@@ -124,5 +124,20 @@ export const useUserTeam = (teamId: number) => {
     }
   };
 
-  return { team, addPlayer, save };
+  const changeLocalTeamIcon = (url: string) => {
+    if (
+      team &&
+      team.players &&
+      team.positions &&
+      team.teamId &&
+      team.team_name
+    ) {
+      setTeam({
+        ...team,
+        icon: url,
+      });
+    }
+  };
+
+  return { team, addPlayer, save, changeLocalTeamIcon };
 };
