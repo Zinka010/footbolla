@@ -37,6 +37,7 @@ const Login: React.FC = () => {
         position: "top",
       });
     } else {
+      toast.closeAll();
       toast({
         colorScheme: "green",
         title: "Login successful",

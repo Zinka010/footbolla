@@ -399,9 +399,10 @@ def populate_player_history(mysql_cursor, sqlite_cursor, mysql_conn):
 
 
 def create_user_team_index(mysql, conn):
-    index_sql = sqlFileContent("indexes/USER_TEAMS.sql")
-
-    mysql.execute(index_sql, multi=True)
+    index_sql = sqlFileContent("indexes/USER_TEAMS_PLAYER.sql")
+    mysql.execute(index_sql)
+    index_sql = sqlFileContent("indexes/USER_TEAMS_ID.sql")
+    mysql.execute(index_sql)
     conn.commit()
 
 
