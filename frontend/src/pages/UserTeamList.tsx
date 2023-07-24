@@ -7,6 +7,7 @@ import {
   FormLabel,
   HStack,
   Heading,
+  Image,
   Input,
   Link,
   Modal,
@@ -134,25 +135,16 @@ const UserTeamList: React.FC = () => {
           {teamList ? (
             teamList.map((item) => (
               <>
-
                 <Box width="full" p={8} textAlign={"left"}>
                   <Link
                     href={`/myTeams/${item.teamId}?teamName=${item.teamName}`}
                     fontSize={20}
                     style={{ display: "flex" }}
                   >
-
-                    <img src={item.icon} width="35" height="35" />
+                    <Image src={item.icon} width="35" height="35" mr={10} />
                     {`${item.teamName}`}
-
                   </Link>
-
-
-
                 </Box>
-
-
-
                 <Divider />
               </>
             ))
