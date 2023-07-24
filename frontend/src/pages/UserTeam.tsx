@@ -31,6 +31,7 @@ import { PlayerPositions, positionMap } from "../util/CONSTANTS";
 import { useUserTeam } from "../hooks/useUserTeam";
 import { useNameSearch } from "../hooks/useNameSearch";
 import { debounce } from "lodash";
+import { setTeamIcon} from "../util/API.ts";
 
 interface PlayerCardProps {
   position: PlayerPositions;
@@ -56,6 +57,8 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
     playerPosition && team
       ? team.players.find((item) => item.player_id == playerPosition.player_id)
       : null;
+
+
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) =>
     debouncedSearch(e.target.value);
@@ -155,6 +158,19 @@ const UserTeam: React.FC = () => {
 
   const toast = useToast();
 
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const icons = ["Icon1.png", "Icon2.png", "Icon3.png",
+    "Icon4.png", "Icon5.png", "Icon6.png",
+    "Icon7.png", "Icon8.png", "Icon9.png",
+    "Icon10.png", "Icon11.png", "Icon12.png",
+    "Icon13.png", "Icon14.png", "Icon15.png",
+    "Icon16.png", "Icon17.png", "Icon18.png",
+    "Icon19.png", "Icon20.png", "Icon21.png",
+    "Icon22.png", "Icon23.png", "Icon24.png", "Icon25.png"];
+  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
+
+
   return (
     <>
       <Navbar />
@@ -168,9 +184,78 @@ const UserTeam: React.FC = () => {
           p={16}
         >
           <HStack justifyContent="space-between">
-            <Heading mb={6} size="3xl" textAlign="left">
-              {teamName}
+
+            <Heading mb={6} size="3xl" textAlign="left" style={{ display: "flex" }}>
+              <img src={`/${team?.icon}`} width="60" height="30" />
             </Heading>
+
+            <Button p={6} fontSize={24} onClick={onOpen}>
+              Change Icon
+            </Button>
+            <Modal isOpen={isOpen} onClose={onClose}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Choose An Icon</ModalHeader>
+                <ModalCloseButton></ModalCloseButton>
+                <ModalBody>
+                  {icons.map((item) => (
+                          <Button
+                              key={item}
+                              mr={2}
+                              mt={2}
+                              variant={
+                                item == selectedIcon ? "solid" : "outline"
+                              }
+                              onClick={() => setSelectedIcon(item)}
+                          >
+                            <img src={`/${item}`} width="30" height="30" />
+                          </Button>
+                      ))}
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                      colorScheme="blue"
+                      mr={3}
+                      onClick={async () => {
+                        if (selectedIcon != null) {
+                          const response = await setTeamIcon(teamId, selectedIcon);
+
+                          if (response) {
+                            toast({
+                              colorScheme: "green",
+                              title: "Icon changed sucessfully",
+                              position: "top",
+                              isClosable: true,
+                            });
+                            navigate("/myTeams");
+                          } else {
+                            toast({
+                              colorScheme: "red",
+                              title: "Could not change Icon",
+                              position: "top",
+                              isClosable: true,
+                            });
+                          }
+                        }
+
+                        onClose();
+                      }}
+                  >
+                    Choose
+                  </Button>
+                  <Button
+                      colorScheme="red"
+                      onClick={() => {
+                        onClose();
+                        setSelectedIcon(null);
+                      }}
+                  >
+                    Cancel
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+
             <Button
               p={6}
               fontSize={24}
@@ -195,7 +280,12 @@ const UserTeam: React.FC = () => {
             >
               Save
             </Button>
+
+
           </HStack>
+          <Heading mb={6} size="3xl" textAlign="left" style={{ display: "flex" }}>
+            {teamName}
+          </Heading>
           <Divider />
           <Grid templateColumns="repeat(3, 1fr)" my={5}>
             <PlayerCard
