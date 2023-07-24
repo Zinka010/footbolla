@@ -4,6 +4,7 @@ class SignupRequest {
     private String username;
     private String email;
     private String password;
+    private String salt;
 
     // Getters and setters
 
@@ -18,6 +19,9 @@ class SignupRequest {
     public String getEmail() {
         return email;
     }
+    public String getSalt() {
+        return salt;
+    }
 
     public void setEmail(String email) {
         this.email = email;
@@ -30,10 +34,14 @@ class SignupRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
 }
 class LoginRequest {
     private String username;
     private String password;
+    private String salt;
 
     // Getters and setters
 
@@ -52,6 +60,8 @@ class LoginRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+    public String getSalt() { return salt; }
+    public void setSalt(String salt) { this.salt = salt; }
 }
 
 class DeleteRequest {
