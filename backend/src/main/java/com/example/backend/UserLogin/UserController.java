@@ -74,12 +74,12 @@ public class UserController {
                 return ResponseEntity.ok("User signup successful.");
             } else {
                 // User signup failed
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to signup.\nPasswords must be at least 8 characters long and contain at least one number or special character.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to signup.");
             }
         } catch (SQLException e) {
             // Handle any database errors
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to signup.\nPasswords must be at least 8 characters long and contain at least one number or special character.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to signup. Passwords must be at least 8 characters long and contain at least one number or special character.");
         }
     }
 
