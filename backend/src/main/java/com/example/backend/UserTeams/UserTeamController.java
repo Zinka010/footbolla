@@ -20,7 +20,7 @@ public class UserTeamController {
     public ResponseEntity<String> createUserTeam(@PathVariable Integer userId, @PathVariable String teamName) {
         try {
             Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
-            String insertQuery = "INSERT INTO UserTeams (team_name) VALUES('" + teamName + "')";
+            String insertQuery = "INSERT INTO UserTeams (team_name, icon) VALUES('" + teamName + "', 'Icon1.png')";
             Statement statement = connection.createStatement();
             int rows_added = statement.executeUpdate(insertQuery, Statement.RETURN_GENERATED_KEYS);
             String returnMessage = "";
@@ -88,12 +88,15 @@ public class UserTeamController {
         try {
             Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
             Statement statement = connection.createStatement();
-            String selectStatment = "SELECT u.team_name, u.user_team_id FROM UserTeams u, IsOwnerOf o WHERE o.user_id = " + userId + " AND o.user_team_id = u.user_team_id";
+            String selectStatment = "SELECT u.team_name, u.user_team_id, u.icon FROM UserTeams u, IsOwnerOf o WHERE o.user_id = " + userId + " AND o.user_team_id = u.user_team_id";
             ResultSet resultSet = statement.executeQuery(selectStatment);
+
             ArrayList<UserTeamResponse> list = new ArrayList<>();
+
             while(resultSet.next()) {
-                list.add(new UserTeamResponse(resultSet.getInt("user_team_id"), resultSet.getString("team_name")));
+                list.add(new UserTeamResponse(resultSet.getInt("user_team_id"), resultSet.getString("team_name"), resultSet.getString("icon")));
             }
+
 
             return ResponseEntity.ok(list);
 
@@ -117,11 +120,12 @@ public class UserTeamController {
             object.put("teamId", teamId);
             object.put("players", res);
 
-            String selectNameStatement = "SELECT team_name FROM UserTeams WHERE user_team_id = " + teamId;
+            String selectNameStatement = "SELECT team_name, icon FROM UserTeams WHERE user_team_id = " + teamId;
             ResultSet name = statement.executeQuery(selectNameStatement);
 
             if(name.next()) {
                 object.put("team_name", name.getString("team_name"));
+                object.put("icon", name.getString("icon"));
             }
 
             String selectPositionStatement = "SELECT position, player_id FROM IsInUserTeam WHERE user_team_id = " + teamId;
@@ -201,4 +205,36 @@ public class UserTeamController {
             return ResponseEntity.badRequest().body(String.format("Unable to parse JSON: %s", e));
         }
     }
+
+    @GetMapping("/getTeamIcon/{teamId}")
+    public ResponseEntity<String> getTeamIcon(@PathVariable Integer teamId) {
+        try {
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
+            Statement statement = connection.createStatement();
+            String selectStatement = "SELECT icon FROM UserTeams where user_team_id = " + teamId;
+            ResultSet resultSet = statement.executeQuery(selectStatement);
+            JSONArray res = Util.resultToJsonArray(resultSet, connection);
+            return ResponseEntity.ok(res.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(new JSONArray().toString());
+        }
+    }
+
+    @PostMapping("/setTeamIcon/{teamId}/{icon}")
+    public ResponseEntity<String> setTeamIcon(@PathVariable Integer teamId, @PathVariable String icon) {
+        try {
+            Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
+            String setQuery = "UPDATE userteams SET icon = '" + icon + "' WHERE user_team_id = '"+teamId+"';";
+            Statement statement = connection.createStatement();
+            int rows_added = statement.executeUpdate(setQuery, Statement.RETURN_GENERATED_KEYS);
+            String returnMessage = "ok";
+            return ResponseEntity.ok(returnMessage);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(String.format("Unable to create team: %s", e));
+        }
+    }
+
+
 }

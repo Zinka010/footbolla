@@ -54,6 +54,7 @@ export type ExtendedPlayer = Player & {
 export type UserTeam = {
   teamId: number;
   team_name: string;
+  icon: string;
   players: ExtendedPlayer[];
   positions: {
     player_id: number;

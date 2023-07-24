@@ -32,6 +32,7 @@ const UserTeamList: React.FC = () => {
     | {
         teamId: number;
         teamName: string;
+        icon: string;
       }[]
     | null
   >(null);
@@ -133,14 +134,25 @@ const UserTeamList: React.FC = () => {
           {teamList ? (
             teamList.map((item) => (
               <>
+
                 <Box width="full" p={8} textAlign={"left"}>
                   <Link
                     href={`/myTeams/${item.teamId}?teamName=${item.teamName}`}
                     fontSize={20}
+                    style={{ display: "flex" }}
                   >
-                    {item.teamName}
+
+                    <img src={item.icon} width="35" height="35" />
+                    {`${item.teamName}`}
+
                   </Link>
+
+
+
                 </Box>
+
+
+
                 <Divider />
               </>
             ))
