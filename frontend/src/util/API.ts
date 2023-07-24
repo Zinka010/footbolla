@@ -200,7 +200,7 @@ export const predictWinner = async (
 
 export const getUserTeams = async (
   userId: number
-): Promise<{ teamId: number; teamName: string }[]> => {
+): Promise<{ teamId: number; teamName: string; icon: string}[]> => {
   try {
     const url = `${API_URL}/getUserTeams/${userId}`;
     const data = await fetch(url);
@@ -211,5 +211,32 @@ export const getUserTeams = async (
     console.error(err);
 
     return [];
+  }
+};
+
+export const setTeamIcon = async (
+    teamId: string | undefined,
+    icon: string,
+): Promise<boolean> => {
+  try {
+    const url = `${API_URL}/setTeamIcon/${teamId}/${icon}`;
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        teamId,
+        icon,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    return false;
   }
 };
