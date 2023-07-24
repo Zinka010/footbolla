@@ -7,6 +7,10 @@ import org.json.JSONArray;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 import java.sql.*;
 
@@ -75,7 +79,7 @@ public class UserController {
         } catch (SQLException e) {
             // Handle any database errors
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to signup. Passwords must be at least 8 characters long and contain at least one number or special character.");
         }
     }
 
