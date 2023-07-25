@@ -55,7 +55,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
         ENGINE_KEY +
         "&q=" +
         player?.name +
-        "+official+football+headshot&imgType=face&searchType=image&key=" +
+        "+official+soccer+player+headshot&imgType=face&searchType=image&key=" +
         API_KEY;
       const imageData = await fetch(fetchImageURL, {
         method: "GET",
