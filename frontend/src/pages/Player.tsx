@@ -33,6 +33,7 @@ interface PlayerProfileProps {
 
 const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
   const [player, setPlayer] = useState<ExtendedPlayer | null>(null);
+  const [imageURL, setImageURL] = useState("");
 
   useEffect(() => {
     const getPlayer = async () => {
@@ -43,6 +44,28 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
 
     getPlayer();
   }, [playerId]);
+
+  useEffect(() => {
+    const getImage = async () => {
+
+      const API_KEY = 'AIzaSyA5vElyEnB38d_a0CEh1auZ-XpOhIWwKj4'
+      const ENGINE_KEY = 'c3b406381430b4952'
+      let fetchImageURL = "https://customsearch.googleapis.com/customsearch/v1?cx=" + ENGINE_KEY + "&q=" + player?.name + "+official+football+headshot&imgType=face&searchType=image&key=" + API_KEY
+      const imageData = await fetch(fetchImageURL, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const jsonData = await imageData.json();
+      console.log(jsonData)
+      setImageURL(jsonData.items[0].link)
+    }
+
+    if (player?.name != "" && player?.name != undefined){
+      getImage();
+    }
+  }, [player?.name])
 
   // here we fetch the player profile from the backend
   return (
@@ -58,6 +81,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
             </CardHeader>
             <CardBody>
               <Stack divider={<StackDivider />} spacing={4}>
+                <Box>
+                  <img src={imageURL} style={{ height: "250px", display: "block", marginLeft: "auto", marginRight: "auto" }}/>
+                </Box>
                 <Box>
                   <Heading size="xs" textTransform="uppercase">
                     Preferred Foot
