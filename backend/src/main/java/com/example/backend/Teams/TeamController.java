@@ -125,7 +125,7 @@ public class TeamController {
     }
 
     @GetMapping("/last_five_matches/{team1_id}/{team2_id}")
-    public ResponseEntity<String> getTeamRosterById(@PathVariable String team1_id, @PathVariable String team2_id) {
+    public ResponseEntity<String> getLastFiveMatches(@PathVariable String team1_id, @PathVariable String team2_id) {
         try {
             Connection connection = DriverManager.getConnection(Constants.url, Constants.username, Constants.password);
             String readMessageQuery = "SELECT * " +

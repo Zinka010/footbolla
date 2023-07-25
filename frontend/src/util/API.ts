@@ -1,5 +1,5 @@
 import { API_URL, PlayerPositions } from "./CONSTANTS";
-import { ExtendedPlayer, UserTeam } from "../types/types";
+import { ExtendedPlayer, Match, OverallMatchHistory, UserTeam } from "../types/types";
 import { User } from "../contexts/userContext";
 
 export const createNewTeam = async (
@@ -195,6 +195,44 @@ export const predictWinner = async (
   } catch (e) {
     console.error(e);
     return "";
+  }
+};
+
+export const fetchOverallMatchHistory = async (
+  team1Id: number,
+  team2Id: number
+): Promise<OverallMatchHistory | null> => {
+  try {
+    const url = `${API_URL}/overall_match_history/${team1Id}/${team2Id}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (res.status == 200 && data[0]) {
+      return data[0];
+    } else {
+      return null;
+    }
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+export const fetchLastFiveMatches = async (
+  team1Id: number,
+  team2Id: number
+): Promise<Match[]> => {
+  try {
+    const url = `${API_URL}/last_five_matches/${team1Id}/${team2Id}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (res.status == 200) {
+      return data;
+    } else {
+      return [];
+    }
+  } catch (e) {
+    console.error(e);
+    return [];
   }
 };
 
