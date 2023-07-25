@@ -47,7 +47,10 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
 
   useEffect(() => {
     const getImage = async () => {
-      let fetchImageURL = "https://customsearch.googleapis.com/customsearch/v1?cx=c3b406381430b4952&q=" + player?.name + "+official+football+headshot&imgType=face&searchType=image&key=AIzaSyA5vElyEnB38d_a0CEh1auZ-XpOhIWwKj4"
+
+      const API_KEY = 'AIzaSyA5vElyEnB38d_a0CEh1auZ-XpOhIWwKj4'
+      const ENGINE_KEY = 'c3b406381430b4952'
+      let fetchImageURL = "https://customsearch.googleapis.com/customsearch/v1?cx=" + ENGINE_KEY + "&q=" + player?.name + "+official+football+headshot&imgType=face&searchType=image&key=" + API_KEY
       const imageData = await fetch(fetchImageURL, {
         method: "GET",
         headers: {
