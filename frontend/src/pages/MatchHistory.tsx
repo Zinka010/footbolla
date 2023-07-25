@@ -25,19 +25,12 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../contexts/userContext";
+import { useEffect, useState } from "react";
 import { PlusSquareIcon } from "@chakra-ui/icons";
 import { useFilterSearch } from "../hooks/useFilterSearch";
 import { Match, OverallMatchHistory, TeamExtendedInfo } from "../types/types";
 import { debounce } from "lodash";
 import { fetchLastFiveMatches, fetchOverallMatchHistory } from "../util/API";
-
-interface Team {
-  teamId: number;
-  teamName: string;
-  icon: string;
-}
 
 const MatchHistory: React.FC = () => {
   const [teamOne, setTeamOne] = useState<TeamExtendedInfo | null>(null);
