@@ -5,6 +5,7 @@ import {
   Divider,
   HStack,
   Heading,
+  Image,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -38,7 +39,6 @@ const UserTeamList: React.FC = () => {
     onClose: onClose2,
     onOpen: onOpen2,
   } = useDisclosure();
-
 
   const getWinner = async () => {
     if (teamOne && teamTwo) {
@@ -92,7 +92,8 @@ const UserTeamList: React.FC = () => {
                       }
                       onClick={() => setTeamOne(item)}
                     >
-                      <img src={item.icon} width="30" height="30" /> {item.teamName}
+                      <Image src={item.icon} width="30" height="30" mr={4} />
+                      {item.teamName}
                     </Button>
                   ))}
               </ModalBody>
@@ -133,7 +134,7 @@ const UserTeamList: React.FC = () => {
                       }
                       onClick={() => setTeamTwo(item)}
                     >
-                      <img src={item.icon} width="30" height="30" />
+                      <Image src={item.icon} width="30" height="30" mr={4} />
                       {item.teamName}
                     </Button>
                   ))}
@@ -161,16 +162,22 @@ const UserTeamList: React.FC = () => {
           <Divider />
           <Center mt={4}>
             <HStack gap={10}>
-              <Button p={10} leftIcon={<PlusSquareIcon />} onClick={onOpen}>
-                <img src={teamOne?.icon} width="30" height="30" />
+              <Button
+                p={10}
+                leftIcon={teamOne ? undefined : <PlusSquareIcon />}
+                onClick={onOpen}
+              >
+                {teamOne && (
+                  <Image src={teamOne?.icon} width="30" height="30" mr={4} />
+                )}
                 {teamOne ? teamOne.teamName : "Choose team 1"}
-
               </Button>
 
-              <Button p={10} leftIcon={<PlusSquareIcon />} onClick={onOpen2}>
-                <img src={teamTwo?.icon} width="30" height="30" />
+              <Button p={10} leftIcon={teamTwo ? undefined : <PlusSquareIcon />} onClick={onOpen2}>
+                {teamTwo && (
+                  <Image src={teamTwo?.icon} width="30" height="30" mr={4} />
+                )}
                 {teamTwo ? teamTwo.teamName : "Choose team 2"}
-
               </Button>
             </HStack>
           </Center>
@@ -188,7 +195,7 @@ const UserTeamList: React.FC = () => {
           <Button isDisabled={!teamOne || !teamTwo} onClick={getWinner}>
             Predict the Winner
           </Button>
-          <Heading size="xl" textAlign={"center"} my={5} >
+          <Heading size="xl" textAlign={"center"} my={5}>
             {winner && `The winner is ${winner.teamName}`}
           </Heading>
         </Box>
