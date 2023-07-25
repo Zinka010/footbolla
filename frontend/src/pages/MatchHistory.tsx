@@ -292,7 +292,7 @@ const MatchHistory: React.FC = () => {
                 <Tr>
                   <Td>{overallMatchHistory?.numTeam1Win}</Td>
                   <Td>{overallMatchHistory?.numTeam2Win}</Td>
-                  <Td>{overallMatchHistory?.numTeam2Win}</Td>
+                  <Td>{overallMatchHistory?.numTies}</Td>
                 </Tr>
               </Tbody>
               <Heading size="1xl" textAlign={"left"} mb={5} paddingTop={10}>
