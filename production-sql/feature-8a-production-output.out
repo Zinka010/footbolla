@@ -1,0 +1,10 @@
+
+
++---------+-----------------+----------------------------+----------------------------------------------+---------------------------+
+| user_id | username        | email                      | password                                     |  salt                     |
++---------+-----------------+----------------------------+----------------------------------------------+---------------------------+
+|       1 | rishadluthra    | rishadluthra@gmail.com     | I9hbluIfqPgSoRMxCFKzD1dhmKhZ9kiJhVW17zgztXA= | vErBwK8gGWJRWMrillSyig==  |
+|       2 | erlinghaaland   | erling@gmail.com           | L+c39zsXhQJS7EwXyNj+G5S5jPxEXN97ADexf/wAecM= | adEZ9eanEle16gqY1f202A==  |
+|       3 | kevindebruyne   | debruyne@gmail.com         | Uzg3m+WcSZebpf6ZdLCCRn4P797N6w2AlcfQCEufwrg= | nURlr9rYeLLfOmWk/Fv/pA==  |
+|       4 | elwey_foden     | ronnie_foden2019@gmail.com | M2V29uI3wuxu47/SoVIs1cjfVNwTlP86ynejMYRvopY= | xksY06aLow564TRNNJ10Vw==  |
++---------+-----------------+----------------------------+----------------------------------------------+---------------------------+
