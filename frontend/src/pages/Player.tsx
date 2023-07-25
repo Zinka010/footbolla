@@ -47,10 +47,16 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
 
   useEffect(() => {
     const getImage = async () => {
+      const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
+      const ENGINE_KEY = import.meta.env.VITE_GOOGLE_ENGINE_KEY;
 
-      const API_KEY = 'AIzaSyA5vElyEnB38d_a0CEh1auZ-XpOhIWwKj4'
-      const ENGINE_KEY = 'c3b406381430b4952'
-      let fetchImageURL = "https://customsearch.googleapis.com/customsearch/v1?cx=" + ENGINE_KEY + "&q=" + player?.name + "+official+football+headshot&imgType=face&searchType=image&key=" + API_KEY
+      const fetchImageURL =
+        "https://customsearch.googleapis.com/customsearch/v1?cx=" +
+        ENGINE_KEY +
+        "&q=" +
+        player?.name +
+        "+official+football+headshot&imgType=face&searchType=image&key=" +
+        API_KEY;
       const imageData = await fetch(fetchImageURL, {
         method: "GET",
         headers: {
@@ -58,14 +64,13 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
         },
       });
       const jsonData = await imageData.json();
-      console.log(jsonData)
-      setImageURL(jsonData.items[0].link)
-    }
+      setImageURL(jsonData.items[0].link);
+    };
 
-    if (player?.name != "" && player?.name != undefined){
+    if (player?.name != "" && player?.name != undefined) {
       getImage();
     }
-  }, [player?.name])
+  }, [player?.name]);
 
   // here we fetch the player profile from the backend
   return (
@@ -82,7 +87,15 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
             <CardBody>
               <Stack divider={<StackDivider />} spacing={4}>
                 <Box>
-                  <img src={imageURL} style={{ height: "250px", display: "block", marginLeft: "auto", marginRight: "auto" }}/>
+                  <img
+                    src={imageURL}
+                    style={{
+                      height: "250px",
+                      display: "block",
+                      marginLeft: "auto",
+                      marginRight: "auto",
+                    }}
+                  />
                 </Box>
                 <Box>
                   <Heading size="xs" textTransform="uppercase">
