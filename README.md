@@ -42,7 +42,9 @@ To run our data-driven application, follow these steps.
 2. Type in this command into the cli: `cd backend/`
 3. Type in this command into the cli: `./gradlew bootRun` or `gradle bootRun`. Whichever works first.
 4. Go into the frontend folder in a new terminal tab: `cd ../frontend` and type `npm install`
-5. Run this command: `npm run dev` and it should tell you the link that the application is being served on. Go to that application, and then you can use the app! The login and signup pages are currently not implemented, so you can just click "Log In" and it should take you to the player list.
+5. Run this command: `npm run dev` and it should tell you the link that the application is being served on.
+6. You will need to sign up for an account by clicking `Sign up here` and signing up.
+7. Login with the account you created.
 
 ### Currently Supported Features
 - Create an account/login
