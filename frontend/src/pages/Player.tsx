@@ -13,6 +13,7 @@ import { Card, CardBody, CardHeader } from "@chakra-ui/card";
 import { ExtendedPlayer } from "../types/types";
 import { API_URL } from "../util/CONSTANTS";
 import { Spinner } from "@chakra-ui/react";
+import { gapi } from 'gapi-script';
 
 const PlayerPage = () => {
   const { playerId } = useParams();
@@ -33,6 +34,7 @@ interface PlayerProfileProps {
 
 const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
   const [player, setPlayer] = useState<ExtendedPlayer | null>(null);
+  const [imageURL, setImageURL] = useState("");
 
   useEffect(() => {
     const getPlayer = async () => {
@@ -43,6 +45,25 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
 
     getPlayer();
   }, [playerId]);
+
+  useEffect(() => {
+    const getImage = async () => {
+      let fetchImageURL = "https://customsearch.googleapis.com/customsearch/v1?cx=c3b406381430b4952&q=" + player?.name + "+official+football+headshot&imgType=face&searchType=image&key=AIzaSyA5vElyEnB38d_a0CEh1auZ-XpOhIWwKj4"
+      const imageData = await fetch(fetchImageURL, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const jsonData = await imageData.json();
+      console.log(jsonData)
+      setImageURL(jsonData.items[0].link)
+    }
+
+    if (player?.name != "" && player?.name != undefined){
+      getImage();
+    }
+  }, [player?.name])
 
   // here we fetch the player profile from the backend
   return (
@@ -58,6 +79,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ playerId }) => {
             </CardHeader>
             <CardBody>
               <Stack divider={<StackDivider />} spacing={4}>
+                <Box>
+                  <img src={imageURL} style={{ height: "250px", display: "block", marginLeft: "auto", marginRight: "auto" }}/>
+                </Box>
                 <Box>
                   <Heading size="xs" textTransform="uppercase">
                     Preferred Foot
