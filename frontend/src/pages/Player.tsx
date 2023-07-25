@@ -13,7 +13,6 @@ import { Card, CardBody, CardHeader } from "@chakra-ui/card";
 import { ExtendedPlayer } from "../types/types";
 import { API_URL } from "../util/CONSTANTS";
 import { Spinner } from "@chakra-ui/react";
-import { gapi } from 'gapi-script';
 
 const PlayerPage = () => {
   const { playerId } = useParams();
