@@ -39,6 +39,12 @@ const Navbar: React.FC = () => {
           Teams
         </Link>
         <Link
+          href="/matchHistory"
+          fontWeight={location.pathname == "/matchHistory" ? 700 : 400}
+        >
+          Match History
+        </Link>
+        <Link
           href="/myTeams"
           fontWeight={location.pathname == "/myTeams" ? 700 : 400}
         >

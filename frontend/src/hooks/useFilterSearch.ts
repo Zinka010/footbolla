@@ -43,6 +43,12 @@ export const useFilterSearch = () => {
     setNumPlayers(Number(num[0].playerCount));
   };
 
+  const resetSearchResults = () => {
+    setTeamResults([]);
+    setPlayerResults([]);
+    setLeagueResults([]);
+  }
+
   return {
     playerResults,
     teamResults,
@@ -52,5 +58,6 @@ export const useFilterSearch = () => {
     fetchPreviousPageOfPlayersFilter: previousPage,
     isAtStartFilter: bounds.start == 0,
     isAtEndFilter: bounds.end > numPlayers,
+    resetSearchResults
   };
 };

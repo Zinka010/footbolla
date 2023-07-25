@@ -99,3 +99,17 @@ export type LeagueInfo = {
   league_id: number; 
   league_name: string;
 }
+
+export type OverallMatchHistory = {
+  numTeam1Win: number, 
+  numTeam2Win: number, 
+  numTies: number
+}
+
+export type Match = {
+  season: string,
+  team1_id: number,
+  team2_id: number,
+  team1_score: number,
+  team2_score: number
+}

@@ -11,6 +11,7 @@ import { UserContext } from "./contexts/userContext";
 import TeamList from "./pages/TeamList";
 import Team from "./pages/Team";
 import CompareUserTeams from "./pages/CompareUserTeams"
+import MatchHistory from "./pages/MatchHistory"
 import Roster from "./pages/Roster";
 import LeagueList from "./pages/LeagueList";
 
@@ -47,6 +48,14 @@ const App: React.FC = () => {
         element={
           <RequireAuth>
             <Team />
+          </RequireAuth>
+        }
+      ></Route>
+      <Route
+        path="/matchHistory"
+        element={
+          <RequireAuth>
+            <MatchHistory />
           </RequireAuth>
         }
       ></Route>
