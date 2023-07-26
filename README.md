@@ -75,3 +75,35 @@ All application code for this project lives in the `frontend/` and `backend/` di
 - Justin Toft
 - Justun Gao
 - Amman Waheed
+
+
+# Sources for the User Icons
+All of the pictures I used are from Flaticon, which are free for commercial and personal projects. I have listed them below.
+
+https://www.flaticon.com/free-icon/football-team_8548925
+https://www.flaticon.com/free-icon/bomb_9462112
+https://www.flaticon.com/free-icon/soccer_8962807
+https://www.flaticon.com/free-icon/arrow_9434458
+https://www.flaticon.com/free-icon/explosion_9462104
+https://www.flaticon.com/free-icon/rings_9849742
+https://www.flaticon.com/free-icon/golf_8962794
+https://www.flaticon.com/free-icon/puzzle_9125425
+https://www.flaticon.com/free-icon/fencing_8962777
+https://www.flaticon.com/free-icon/gym_8962808
+https://www.flaticon.com/free-icon/weight_9188446
+https://www.flaticon.com/free-icon/bottle_9188449
+https://www.flaticon.com/free-icon/heart_9849695
+https://www.flaticon.com/free-icon/hoop_9188445
+https://www.flaticon.com/free-icon/glove_9069587
+https://www.flaticon.com/free-icon/hat_10738688
+https://www.flaticon.com/free-icon/badge_10606460
+https://www.flaticon.com/free-icon/music_10606467
+https://www.flaticon.com/free-icon/guitar_9600968
+https://www.flaticon.com/free-icon/rocks_8563654
+https://www.flaticon.com/free-icon/brunfelsia-pauciflora_10738684
+https://www.flaticon.com/free-icon/clovers_9764100
+https://www.flaticon.com/free-icon/mountains_9849727
+https://www.flaticon.com/free-icon/lotus_11064997
+https://www.flaticon.com/free-icon/twister_9462140
+
+
