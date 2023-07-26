@@ -62,7 +62,7 @@ All SQL code for this project can be found in `migration / relation-schema`
 All SQL queries can be found in `sample-sql`
 
 ## C4 - SQL Queries for Features (production data)
-- Need to populate C4
+All SQL queries can be found in `production-sql`
 
 ## C5 - Application Code
 All application code for this project lives in the `frontend/` and `backend/` directories.
